@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VotoChain — Ecuador</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --negro: #0a0a0a; --blanco: #f7f5f0; --acento: #c8392b; --gris: #8a8680; --gris-claro: #e8e5e0; --verde: #2a7a4b; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--blanco); color: var(--negro); min-height: 100vh; display: flex; flex-direction: column; }
+        header { padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gris-claro); }
+        .logo { display: flex; align-items: center; gap: 1rem; }
+        .logo-icono { width: 36px; height: 36px; background: var(--negro); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .logo-icono svg { width: 18px; height: 18px; fill: none; stroke: var(--blanco); stroke-width: 2; }
+        .logo-texto { font-family: 'DM Serif Display', serif; font-size: 1.1rem; letter-spacing: -0.02em; }
+        .logo-sub { font-size: 0.7rem; color: var(--gris); font-weight: 300; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+        .estado-badge { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--gris); letter-spacing: 0.05em; text-transform: uppercase; }
+        .estado-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); animation: pulso 2s infinite; }
+        @keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        main { flex: 1; display: grid; grid-template-columns: 1fr 1fr; max-width: 1100px; margin: 0 auto; width: 100%; padding: 4rem 3rem; gap: 6rem; }
+        .col-izq { display: flex; flex-direction: column; gap: 2.5rem; }
+        .titulo-seccion { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gris); font-weight: 500; }
+        h1 { font-family: 'DM Serif Display', serif; font-size: 3rem; line-height: 1.05; letter-spacing: -0.03em; }
+        h1 em { font-style: italic; color: var(--acento); }
+        .descripcion { font-size: 0.95rem; color: var(--gris); line-height: 1.7; font-weight: 300; max-width: 380px; }
+        .periodos { display: flex; flex-direction: column; }
+        .periodo { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gris-claro); }
+        .periodo:first-child { border-top: 1px solid var(--gris-claro); }
+        .periodo-num { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--gris-claro); width: 2rem; flex-shrink: 0; }
+        .periodo.activo .periodo-num { color: var(--acento); }
+        .periodo.completado .periodo-num { color: var(--verde); }
+        .periodo-info { flex: 1; }
+        .periodo-nombre { font-size: 0.85rem; font-weight: 500; }
+        .periodo-tiempo { font-size: 0.75rem; color: var(--gris); margin-top: 2px; }
+        .periodo-estado { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 2rem; font-weight: 500; }
+        .periodo.activo .periodo-estado { background: #fef2f2; color: var(--acento); }
+        .periodo.completado .periodo-estado { background: #f0fdf4; color: var(--verde); }
+        .periodo.pendiente .periodo-estado { background: var(--gris-claro); color: var(--gris); }
+        .col-der { display: flex; flex-direction: column; gap: 1.5rem; }
+        .panel { background: white; border: 1px solid var(--gris-claro); border-radius: 4px; padding: 2rem; display: none; flex-direction: column; gap: 1.5rem; animation: aparecer 0.4s ease; }
+        .panel.visible { display: flex; }
+        @keyframes aparecer { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .panel-titulo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; letter-spacing: -0.02em; }
+        .campo { display: flex; flex-direction: column; gap: 0.4rem; }
+        .campo label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); font-weight: 500; }
+        .campo input { border: 1px solid var(--gris-claro); border-radius: 3px; padding: 0.75rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--blanco); color: var(--negro); transition: border-color 0.2s; outline: none; }
+        .campo input:focus { border-color: var(--negro); }
+        .candidatos-lista { display: flex; flex-direction: column; gap: 0.5rem; }
+        .candidato-opcion { border: 1px solid var(--gris-claro); border-radius: 3px; padding: 1rem 1.2rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--blanco); }
+        .candidato-opcion:hover { border-color: var(--negro); }
+        .candidato-opcion.seleccionado { border-color: var(--negro); background: var(--negro); color: var(--blanco); }
+        .candidato-nombre { font-size: 0.9rem; font-weight: 500; }
+        .candidato-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gris-claro); transition: all 0.2s; flex-shrink: 0; }
+        .candidato-opcion.seleccionado .candidato-check { background: var(--blanco); border-color: var(--blanco); }
+        .btn { padding: 0.85rem 1.5rem; border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em; width: 100%; }
+        .btn-primario { background: var(--negro); color: var(--blanco); }
+        .btn-primario:hover { background: #2a2a2a; }
+        .btn-primario:disabled { background: var(--gris-claro); color: var(--gris); cursor: not-allowed; }
+        .btn-secundario { background: white; color: var(--negro); border: 1px solid var(--gris-claro); }
+        .btn-secundario:hover { border-color: var(--negro); }
+        .mensaje { font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 3px; display: none; }
+        .mensaje.visible { display: block; }
+        .mensaje.error { background: #fef2f2; color: var(--acento); border-left: 3px solid var(--acento); }
+        .mensaje.exito { background: #f0fdf4; color: var(--verde); border-left: 3px solid var(--verde); }
+        .mensaje.info { background: #f8f7f5; color: var(--gris); border-left: 3px solid var(--gris-claro); }
+        .bienvenida { font-size: 1rem; font-weight: 500; color: var(--verde); padding: 0.75rem 1rem; background: #f0fdf4; border-radius: 3px; }
+        .resultado-item { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.2rem; }
+        .resultado-header { display: flex; justify-content: space-between; align-items: baseline; }
+        .resultado-nombre { font-size: 0.9rem; font-weight: 500; }
+        .resultado-votos { font-size: 0.8rem; color: var(--gris); }
+        .barra-fondo { height: 3px; background: var(--gris-claro); border-radius: 2px; overflow: hidden; }
+        .barra-relleno { height: 100%; background: var(--negro); border-radius: 2px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+        .resultado-item.ganador .barra-relleno { background: var(--acento); }
+        .ganador-badge { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--acento); font-weight: 500; }
+        .info-blockchain { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--gris-claro); }
+        .info-fila { display: flex; justify-content: space-between; font-size: 0.75rem; }
+        .info-clave { color: var(--gris); }
+        .info-valor { font-family: monospace; font-size: 0.7rem; color: var(--negro); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        footer { padding: 1.5rem 3rem; border-top: 1px solid var(--gris-claro); display: flex; justify-content: space-between; align-items: center; }
+        .footer-txt { font-size: 0.72rem; color: var(--gris); letter-spacing: 0.03em; }
+        .footer-hash { font-family: monospace; font-size: 0.65rem; color: var(--gris); }
+        @media (max-width: 768px) { main { grid-template-columns: 1fr; gap: 3rem; padding: 2rem 1.5rem; } header { padding: 1.5rem; } h1 { font-size: 2.2rem; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icono">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+            <div class="logo-texto">VotoChain</div>
+            <div class="logo-sub">Ecuador · Red local</div>
+        </div>
+    </div>
+    <div class="estado-badge">
+        <div class="estado-dot"></div>
+        Red activa
+    </div>
+</header>
+
+<main>
+    <div class="col-izq">
+        <div>
+            <div class="titulo-seccion">Sistema Electoral</div>
+            <h1>Democracia <em>real</em> en cadena</h1>
+        </div>
+        <p class="descripcion">Cada voto se registra en blockchain: inmutable, transparente y auditable por cualquier ciudadano. Sin intermediarios. Sin posibilidad de manipulación.</p>
+        <div class="periodos">
+            <div class="periodo completado">
+                <div class="periodo-num">01</div>
+                <div class="periodo-info">
+                    <div class="periodo-nombre">Inscripción</div>
+                    <div class="periodo-tiempo">Padrón cargado por el CNE</div>
+                </div>
+                <div class="periodo-estado">Completado</div>
+            </div>
+            <div class="periodo activo">
+                <div class="periodo-num">02</div>
+                <div class="periodo-info">
+                    <div class="periodo-nombre">Votación</div>
+                    <div class="periodo-tiempo">En curso</div>
+                </div>
+                <div class="periodo-estado">Activo</div>
+            </div>
+            <div class="periodo pendiente">
+                <div class="periodo-num">03</div>
+                <div class="periodo-info">
+                    <div class="periodo-nombre">Resultados</div>
+                    <div class="periodo-tiempo">Disponible al cerrar</div>
+                </div>
+                <div class="periodo-estado">Pendiente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-der">
+
+        <!-- PASO 1: CÉDULA -->
+        <div class="panel visible" id="panel-cedula">
+            <div class="panel-titulo">Paso 1 — Ingresa tu cédula</div>
+            <div class="campo">
+                <label>Número de cédula</label>
+                <input type="text" id="cedula-input" placeholder="1712345678" maxlength="10" inputmode="numeric">
+            </div>
+            <div class="mensaje" id="msg-cedula"></div>
+            <button class="btn btn-primario" id="btn-cedula" onclick="verificarCedula()">Continuar</button>
+        </div>
+
+        <!-- PASO 2: PIN -->
+        <div class="panel" id="panel-pin">
+            <div class="panel-titulo">Paso 2 — Ingresa tu PIN</div>
+            <div class="campo">
+                <label>PIN personal</label>
+                <input type="password" id="pin-input" placeholder="••••" maxlength="6" inputmode="numeric">
+            </div>
+            <div class="mensaje" id="msg-pin"></div>
+            <button class="btn btn-primario" id="btn-pin" onclick="verificarPin()">Continuar</button>
+        </div>
+
+        <!-- PASO 3: VOTO -->
+        <div class="panel" id="panel-voto">
+            <div class="panel-titulo">Paso 3 — Selecciona tu candidato</div>
+            <div class="bienvenida" id="bienvenida"></div>
+            <div class="candidatos-lista" id="candidatos-lista"></div>
+            <div class="mensaje" id="msg-voto"></div>
+            <button class="btn btn-primario" id="btn-votar" onclick="registrarVoto()">Registrar voto en blockchain</button>
+            <div class="info-blockchain">
+                <div class="info-fila">
+                    <span class="info-clave">Contrato</span>
+                    <span class="info-valor" id="info-contrato">—</span>
+                </div>
+                <div class="info-fila">
+                    <span class="info-clave">Red</span>
+                    <span class="info-valor">Hardhat Local</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div class="panel visible" id="panel-resultados">
+            <div class="panel-titulo">Resultados en tiempo real</div>
+            <div id="resultados-lista"><p style="font-size:0.8rem;color:var(--gris)">Cargando...</p></div>
+            <button class="btn btn-secundario" onclick="cargarResultados()">Actualizar</button>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <div class="footer-txt">VotoChain — Sistema de votación descentralizado · Ecuador</div>
+    <div class="footer-hash" id="footer-hash">Conectado al servidor</div>
+</footer>
+
+<script>
+    const API = "http://192.168.100.5:3000";
+    const CANDIDATOS = ["Jaime Roldós", "Rafael Correa", "Noboa"];
+    let cedulaVerificada = null;
+    let candidatoSeleccionado = null;
+
+    // Generar candidatos
+    const lista = document.getElementById("candidatos-lista");
+    CANDIDATOS.forEach(nombre => {
+        const div = document.createElement("div");
+        div.className = "candidato-opcion";
+        div.innerHTML = '<span class="candidato-nombre">' + nombre + '</span><div class="candidato-check"></div>';
+        div.onclick = () => {
+            document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
+            div.classList.add("seleccionado");
+            candidatoSeleccionado = nombre;
+        };
+        lista.appendChild(div);
+    });
+
+    async function verificarCedula() {
+        const cedula = document.getElementById("cedula-input").value.trim();
+        const msg = document.getElementById("msg-cedula");
+        const btn = document.getElementById("btn-cedula");
+        btn.disabled = true;
+        btn.textContent = "Verificando...";
+        mostrarMensaje(msg, "info", "Consultando los tres padrones...");
+        try {
+            const res = await fetch(API + "/api/verificar-cedula", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula })
+            });
+            const data = await res.json();
+            if (data.valido) {
+                cedulaVerificada = cedula;
+                document.getElementById("panel-cedula").classList.remove("visible");
+                document.getElementById("panel-pin").classList.add("visible");
+                document.getElementById("pin-input").focus();
+            } else {
+                mostrarMensaje(msg, "error", data.mensaje);
+            }
+        } catch (e) {
+            mostrarMensaje(msg, "error", "No se pudo conectar al servidor.");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Continuar";
+        }
+    }
+
+    async function verificarPin() {
+        const pin = document.getElementById("pin-input").value.trim();
+        const msg = document.getElementById("msg-pin");
+        const btn = document.getElementById("btn-pin");
+        btn.disabled = true;
+        btn.textContent = "Verificando...";
+        mostrarMensaje(msg, "info", "Verificando PIN...");
+        try {
+            const res = await fetch(API + "/api/verificar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula: cedulaVerificada, pin })
+            });
+            const data = await res.json();
+            if (data.valido) {
+                document.getElementById("bienvenida").textContent = "Hola, " + data.nombre + ". Selecciona tu candidato.";
+                document.getElementById("panel-pin").classList.remove("visible");
+                document.getElementById("panel-voto").classList.add("visible");
+            } else {
+                mostrarMensaje(msg, "error", data.mensaje);
+            }
+        } catch (e) {
+            mostrarMensaje(msg, "error", "No se pudo conectar al servidor.");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Continuar";
+        }
+    }
+
+    async function registrarVoto() {
+        const msg = document.getElementById("msg-voto");
+        const btn = document.getElementById("btn-votar");
+        if (!candidatoSeleccionado) { mostrarMensaje(msg, "error", "Selecciona un candidato."); return; }
+        btn.disabled = true;
+        btn.textContent = "Enviando a blockchain...";
+        mostrarMensaje(msg, "info", "Registrando voto en la cadena...");
+        try {
+            const res = await fetch(API + "/api/votar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cedula: cedulaVerificada, candidato: candidatoSeleccionado })
+            });
+            const data = await res.json();
+            if (data.exito) {
+                mostrarMensaje(msg, "exito", "Voto registrado en blockchain.");
+                document.getElementById("footer-hash").textContent = "TX: " + data.tx.slice(0,18) + "...";
+                cargarResultados();
+                setTimeout(() => {
+                    document.getElementById("panel-voto").classList.remove("visible");
+                    document.getElementById("panel-cedula").classList.add("visible");
+                    document.getElementById("cedula-input").value = "";
+                    document.getElementById("pin-input").value = "";
+                    document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
+                    candidatoSeleccionado = null;
+                    cedulaVerificada = null;
+                    btn.disabled = false;
+                    btn.textContent = "Registrar voto en blockchain";
+                }, 3000);
+            } else {
+                mostrarMensaje(msg, "error", data.mensaje);
+                btn.disabled = false;
+                btn.textContent = "Registrar voto en blockchain";
+            }
+        } catch (e) {
+            mostrarMensaje(msg, "error", "Error de conexión con el servidor.");
+            btn.disabled = false;
+            btn.textContent = "Registrar voto en blockchain";
+        }
+    }
+
+    async function cargarResultados() {
+        const lista = document.getElementById("resultados-lista");
+        try {
+            const res = await fetch(API + "/api/resultados");
+            const data = await res.json();
+            if (!data.exito) return;
+            const total = data.resultados.reduce((a, b) => a + b.votos, 0);
+            const max = Math.max(...data.resultados.map(r => r.votos));
+            lista.innerHTML = "";
+            data.resultados.forEach(function(r) {
+                const pct = total > 0 ? (r.votos / total * 100) : 0;
+                const esGanador = r.votos === max && max > 0;
+                const div = document.createElement("div");
+                div.className = "resultado-item" + (esGanador ? " ganador" : "");
+                div.innerHTML = '<div class="resultado-header"><span class="resultado-nombre">' + r.candidato + (esGanador ? ' <span class="ganador-badge">— Líder</span>' : '') + '</span><span class="resultado-votos">' + r.votos + ' voto' + (r.votos !== 1 ? 's' : '') + ' · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno" data-p="' + pct + '"></div></div>';
+                lista.appendChild(div);
+            });
+            setTimeout(function() {
+                document.querySelectorAll(".barra-relleno").forEach(function(b) { b.style.width = b.dataset.p + "%"; });
+            }, 100);
+        } catch(e) {
+            lista.innerHTML = "<p style='font-size:0.8rem;color:var(--gris)'>Cargando resultados...</p>";
+        }
+    }
+
+    function mostrarMensaje(el, tipo, texto) {
+        el.className = "mensaje " + tipo + " visible";
+        el.textContent = texto;
+    }
+
+    document.getElementById("cedula-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarCedula(); });
+    document.getElementById("pin-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarPin(); });
+
+    cargarResultados();
+    setInterval(cargarResultados, 10000);
+</script>
+</body>
+</html>
