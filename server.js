@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("."));
 
-const DIRECCION_CONTRATO = process.env.DIRECCION_CONTRATO || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const DIRECCION_CONTRATO = process.env.DIRECCION_CONTRATO || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL || "http://127.0.0.1:8545";
 const PORT = process.env.PORT || 3000;
@@ -18,11 +18,21 @@ const PORT = process.env.PORT || 3000;
 const ABI = [
     "function votar(string memory cedula, string memory candidato) public",
     "function obtenerVotos(string memory candidato) public view returns (uint)",
+    "function cerrarVotacion() public",
+    "function obtenerInfo() public view returns (string memory, string memory, bool, uint, uint)",
+    "function registrarCiudadano(string memory cedula) public",
+    "function agregarMilitante(string memory cedula) public",
 ];
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-const contrato = new ethers.Contract(DIRECCION_CONTRATO, ABI, wallet);
+let CONTRATO_ACTIVO = DIRECCION_CONTRATO;
+if (fs.existsSync("./contrato-activo.json")) {
+    CONTRATO_ACTIVO = JSON.parse(fs.readFileSync("./contrato-activo.json", "utf8")).direccion;
+}
+let contrato = new ethers.Contract(CONTRATO_ACTIVO, ABI, wallet);
+
+// FIX 1: Eliminada variable "walletConNonce" que estaba declarada pero nunca se usaba.
 
 function leerXLSX(ruta) {
     try {
@@ -81,9 +91,98 @@ app.post("/api/votar", async (req, res) => {
 
 app.get("/api/resultados", async (req, res) => {
     try {
-        const candidatos = ["Jaime Roldós", "Rafael Correa", "Noboa"];
-        const resultados = await Promise.all(candidatos.map(async c => ({ candidato: c, votos: Number(await contrato.obtenerVotos(c)) })));
+        const artifact = JSON.parse(fs.readFileSync("./artifacts/contracts/Votacion.sol/Votacion.json", "utf8"));
+        const contratoCompleto = new ethers.Contract(await contrato.getAddress(), artifact.abi, wallet);
+        const opciones = [];
+        let i = 0;
+        while (true) {
+            try {
+                const opcion = await contratoCompleto.candidatos(i);
+                opciones.push(opcion);
+                i++;
+            } catch(e) { break; }
+        }
+        const resultados = await Promise.all(
+            opciones.map(async c => ({ candidato: c, votos: Number(await contrato.obtenerVotos(c)) }))
+        );
         res.json({ exito: true, resultados });
+    } catch (error) {
+        res.json({ exito: false, mensaje: error.message });
+    }
+});
+
+app.get("/api/info-proceso", async (req, res) => {
+    try {
+        const [titulo, tipo, cerrado, inicioVotacion, finVotacion] = await contrato.obtenerInfo();
+        res.json({
+            exito: true,
+            titulo,
+            tipo,
+            cerrado,
+            inicioVotacion: Number(inicioVotacion),
+            finVotacion: Number(finVotacion)
+        });
+    } catch (error) {
+        res.json({ exito: false, mensaje: error.message });
+    }
+});
+
+app.get("/api/opciones", async (req, res) => {
+    try {
+        const artifact = JSON.parse(fs.readFileSync("./artifacts/contracts/Votacion.sol/Votacion.json", "utf8"));
+        const contratoCompleto = new ethers.Contract(
+            await contrato.getAddress(), artifact.abi, wallet
+        );
+        const opciones = [];
+        let i = 0;
+        while (true) {
+            try {
+                const opcion = await contratoCompleto.candidatos(i);
+                opciones.push(opcion);
+                i++;
+            } catch(e) {
+                break;
+            }
+        }
+        res.json({ exito: true, opciones });
+    } catch (error) {
+        res.json({ exito: false, mensaje: error.message });
+    }
+});
+
+app.post("/api/cerrar-votacion", async (req, res) => {
+    try {
+        const tx = await contrato.cerrarVotacion();
+        await tx.wait();
+        res.json({ exito: true, mensaje: "Votación cerrada en blockchain." });
+    } catch (error) {
+        res.json({ exito: false, mensaje: error.reason || error.message });
+    }
+});
+
+// FIX 2: Eliminado bloque duplicado fuera del try. Se unificó en un solo flujo correcto.
+app.post("/api/crear-proceso", async (req, res) => {
+    const { titulo, tipo, opciones, inicioInscripcion, finInscripcion, inicioVotacion, finVotacion } = req.body;
+    if (!titulo || !opciones || opciones.length < 2) {
+        return res.json({ exito: false, mensaje: "Datos incompletos." });
+    }
+    try {
+        const { execSync } = require("child_process");
+        const ahora = Math.floor(Date.now() / 1000);
+        const config = {
+            titulo, tipo, opciones,
+            inicioInscripcion: inicioInscripcion ? Math.floor(new Date(inicioInscripcion).getTime() / 1000) : ahora - 10,
+            finInscripcion: finInscripcion ? Math.floor(new Date(finInscripcion).getTime() / 1000) : ahora + 3600,
+            inicioVotacion: Math.floor(new Date(inicioVotacion).getTime() / 1000),
+            finVotacion: Math.floor(new Date(finVotacion).getTime() / 1000)
+        };
+        fs.writeFileSync("./proceso-config.json", JSON.stringify(config));
+        const output = execSync("npx hardhat run scripts/deploy.js --network localhost", { encoding: "utf8" });
+        const match = output.match(/0x[a-fA-F0-9]{40}/);
+        if (!match) return res.json({ exito: false, mensaje: "No se pudo obtener la dirección del contrato." });
+        const direccion = match[0];
+        contrato = new ethers.Contract(direccion, ABI, wallet);
+        res.json({ exito: true, direccion, mensaje: 'Proceso "' + titulo + '" desplegado en ' + direccion });
     } catch (error) {
         res.json({ exito: false, mensaje: error.message });
     }
@@ -95,6 +194,14 @@ app.post("/api/subir-padron", express.raw({ type: "application/octet-stream", li
     if (!nombres[tipo]) return res.json({ exito: false, mensaje: "Tipo inválido." });
     fs.writeFileSync(nombres[tipo], req.body);
     res.json({ exito: true, mensaje: `Padrón ${tipo} actualizado.` });
+});
+
+process.on("uncaughtException", (err) => {
+    console.error("Error no capturado:", err.message);
+});
+
+process.on("unhandledRejection", (reason) => {
+    console.error("Promesa rechazada:", reason);
 });
 
 app.listen(PORT, "0.0.0.0", () => {

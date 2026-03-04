@@ -21,3 +21,6 @@ node_modules/
 padrones/
 cache/
 artifacts/
+
+contrato-activo.json
+proceso-config.json

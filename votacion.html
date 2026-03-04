@@ -196,23 +196,31 @@
 
 <script>
     const API = "http://192.168.100.5:3000";
-    const CANDIDATOS = ["Jaime Roldós", "Rafael Correa", "Noboa"];
     let cedulaVerificada = null;
     let candidatoSeleccionado = null;
 
-    // Generar candidatos
-    const lista = document.getElementById("candidatos-lista");
-    CANDIDATOS.forEach(nombre => {
-        const div = document.createElement("div");
-        div.className = "candidato-opcion";
-        div.innerHTML = '<span class="candidato-nombre">' + nombre + '</span><div class="candidato-check"></div>';
-        div.onclick = () => {
-            document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
-            div.classList.add("seleccionado");
-            candidatoSeleccionado = nombre;
-        };
-        lista.appendChild(div);
-    });
+    async function cargarOpciones() {
+        try {
+            const res = await fetch(API + "/api/opciones");
+            const data = await res.json();
+            if (!data.exito) return;
+            const lista = document.getElementById("candidatos-lista");
+            lista.innerHTML = "";
+            data.opciones.forEach(nombre => {
+                const div = document.createElement("div");
+                div.className = "candidato-opcion";
+                div.innerHTML = '<span class="candidato-nombre">' + nombre + '</span><div class="candidato-check"></div>';
+                div.onclick = () => {
+                    document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
+                    div.classList.add("seleccionado");
+                    candidatoSeleccionado = nombre;
+                };
+                lista.appendChild(div);
+            });
+        } catch(e) {
+            console.error("Error cargando opciones:", e);
+        }
+    }
 
     async function verificarCedula() {
         const cedula = document.getElementById("cedula-input").value.trim();
@@ -347,6 +355,7 @@
     document.getElementById("cedula-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarCedula(); });
     document.getElementById("pin-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarPin(); });
 
+    cargarOpciones();
     cargarResultados();
     setInterval(cargarResultados, 10000);
 </script>

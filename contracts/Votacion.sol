@@ -3,6 +3,10 @@ pragma solidity ^0.8.0;
 
 contract Votacion {
     address public cne;
+    string public tituloProceso;
+    string public tipoProceso;
+    bool public cerrado;
+
     string[] public candidatos;
     mapping(string => uint) public conteo;
     mapping(string => bool) public yaVoto;
@@ -16,16 +20,21 @@ contract Votacion {
     uint public finVotacion;
 
     constructor(
+        string memory _titulo,
+        string memory _tipo,
         uint _inicioInscripcion,
         uint _finInscripcion,
         uint _inicioVotacion,
         uint _finVotacion
     ) {
         cne = msg.sender;
+        tituloProceso = _titulo;
+        tipoProceso = _tipo;
         inicioInscripcion = _inicioInscripcion;
         finInscripcion = _finInscripcion;
         inicioVotacion = _inicioVotacion;
         finVotacion = _finVotacion;
+        cerrado = false;
     }
 
     modifier soloEnInscripcion() {
@@ -35,25 +44,28 @@ contract Votacion {
     }
 
     modifier soloEnVotacion() {
+        require(!cerrado, "Proceso cerrado manualmente");
         require(block.timestamp >= inicioVotacion, "Votacion no ha comenzado");
         require(block.timestamp <= finVotacion, "Votacion cerrada");
         _;
     }
 
-    function registrarCiudadano(string memory cedula) public soloEnInscripcion {
-        require(msg.sender == cne, "Solo el CNE puede registrar");
+    modifier soloCNE() {
+        require(msg.sender == cne, "Solo el CNE puede ejecutar esto");
+        _;
+    }
+
+    function agregarCandidato(string memory nombre) public soloCNE {
+        candidatos.push(nombre);
+    }
+
+    function registrarCiudadano(string memory cedula) public soloCNE {
         registroCivil[cedula] = true;
         padronCNE[cedula] = true;
     }
 
-    function agregarMilitante(string memory cedula) public soloEnInscripcion {
-        require(msg.sender == cne, "Solo el partido puede agregar militantes");
+    function agregarMilitante(string memory cedula) public soloCNE {
         padronPartido[cedula] = true;
-    }
-
-    function agregarCandidato(string memory nombre) public soloEnInscripcion {
-        require(msg.sender == cne, "Solo el CNE puede agregar candidatos");
-        candidatos.push(nombre);
     }
 
     function votar(string memory cedula, string memory candidato) public soloEnVotacion {
@@ -65,7 +77,17 @@ contract Votacion {
         conteo[candidato] += 1;
     }
 
+    function cerrarVotacion() public soloCNE {
+        cerrado = true;
+    }
+
     function obtenerVotos(string memory candidato) public view returns (uint) {
         return conteo[candidato];
+    }
+
+    function obtenerInfo() public view returns (
+        string memory, string memory, bool, uint, uint
+    ) {
+        return (tituloProceso, tipoProceso, cerrado, inicioVotacion, finVotacion);
     }
 }

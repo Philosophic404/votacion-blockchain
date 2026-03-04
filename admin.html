@@ -7,380 +7,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg: #0e0e0e;
-            --surface: #161616;
-            --surface2: #1e1e1e;
-            --border: #2a2a2a;
-            --text: #e8e4dc;
-            --text-dim: #6a6660;
-            --acento: #c8392b;
-            --acento-dim: #3a1510;
-            --verde: #2a7a4b;
-            --verde-dim: #0f2a1a;
-            --amarillo: #c8a22b;
-            --amarillo-dim: #2a220a;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            flex-shrink: 0;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-logo {
-            padding: 0 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-        }
-
-        .sidebar-logo-titulo {
-            font-family: 'Fraunces', serif;
-            font-size: 1.2rem;
-            letter-spacing: -0.02em;
-            color: var(--text);
-        }
-
-        .sidebar-logo-sub {
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-top: 3px;
-            font-family: 'DM Mono', monospace;
-        }
-
-        .sidebar-seccion {
-            padding: 0 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-seccion-titulo {
-            font-size: 0.62rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            padding: 0 0.5rem;
-            margin-bottom: 0.4rem;
-            font-weight: 500;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            border: 1px solid transparent;
-        }
-
+        :root { --bg: #0e0e0e; --surface: #161616; --surface2: #1e1e1e; --border: #2a2a2a; --text: #e8e4dc; --text-dim: #6a6660; --acento: #c8392b; --acento-dim: #3a1510; --verde: #2a7a4b; --verde-dim: #0f2a1a; --amarillo: #c8a22b; --amarillo-dim: #2a220a; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+        .sidebar { width: 260px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar-logo { padding: 0 1.5rem 2rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+        .sidebar-logo-titulo { font-family: 'Fraunces', serif; font-size: 1.2rem; letter-spacing: -0.02em; }
+        .sidebar-logo-sub { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; font-family: 'DM Mono', monospace; }
+        .sidebar-seccion { padding: 0 1rem; margin-bottom: 0.5rem; }
+        .sidebar-seccion-titulo { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); padding: 0 0.5rem; margin-bottom: 0.4rem; font-weight: 500; }
+        .sidebar-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 4px; cursor: pointer; transition: all 0.15s; font-size: 0.82rem; color: var(--text-dim); border: 1px solid transparent; }
         .sidebar-item:hover { background: var(--surface2); color: var(--text); }
         .sidebar-item.activo { background: var(--surface2); color: var(--text); border-color: var(--border); }
-
-        .sidebar-item-icono {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-            opacity: 0.6;
-        }
-
+        .sidebar-item-icono { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.6; }
         .sidebar-item.activo .sidebar-item-icono { opacity: 1; }
-
-        .sidebar-badge {
-            margin-left: auto;
-            font-size: 0.6rem;
-            padding: 0.15rem 0.4rem;
-            border-radius: 2rem;
-            font-family: 'DM Mono', monospace;
-        }
-
-        .badge-verde { background: var(--verde-dim); color: var(--verde); }
-        .badge-rojo { background: var(--acento-dim); color: var(--acento); }
-        .badge-amarillo { background: var(--amarillo-dim); color: var(--amarillo); }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .sidebar-footer-txt {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            font-family: 'DM Mono', monospace;
-            line-height: 1.6;
-        }
-
-        /* CONTENIDO */
-        .contenido {
-            margin-left: 260px;
-            flex: 1;
-            padding: 2.5rem 3rem;
-            min-height: 100vh;
-        }
-
+        .sidebar-footer { margin-top: auto; padding: 1.5rem; border-top: 1px solid var(--border); }
+        .sidebar-footer-txt { font-size: 0.7rem; color: var(--text-dim); font-family: 'DM Mono', monospace; line-height: 1.6; }
+        .contenido { margin-left: 260px; flex: 1; padding: 2.5rem 3rem; min-height: 100vh; }
         .page { display: none; }
         .page.visible { display: block; animation: aparecer 0.3s ease; }
-
         @keyframes aparecer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        .page-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .page-titulo {
-            font-family: 'Fraunces', serif;
-            font-size: 2rem;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-        }
-
+        .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-titulo { font-family: 'Fraunces', serif; font-size: 2rem; letter-spacing: -0.03em; line-height: 1.1; }
         .page-titulo em { font-style: italic; color: var(--acento); }
-
-        .page-subtitulo {
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            margin-top: 0.4rem;
-        }
-
-        /* CARDS */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 1.5rem;
-        }
-
-        .card-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 0.75rem;
-        }
-
-        .card-valor {
-            font-family: 'Fraunces', serif;
-            font-size: 2.2rem;
-            letter-spacing: -0.03em;
-            line-height: 1;
-        }
-
+        .page-subtitulo { font-size: 0.82rem; color: var(--text-dim); margin-top: 0.4rem; }
+        .grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; }
+        .card-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem; }
+        .card-valor { font-family: 'Fraunces', serif; font-size: 2.2rem; letter-spacing: -0.03em; line-height: 1; }
         .card-valor.verde { color: var(--verde); }
         .card-valor.rojo { color: var(--acento); }
         .card-valor.amarillo { color: var(--amarillo); }
-
-        .card-sub {
-            font-size: 0.72rem;
-            color: var(--text-dim);
-            margin-top: 0.4rem;
-        }
-
-        /* TABLA */
-        .tabla-container {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .tabla-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tabla-titulo {
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            font-weight: 500;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 0.9rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--surface2); }
-
-        .estado-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 2rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .estado-pill.activo { background: var(--verde-dim); color: var(--verde); }
-        .estado-pill.cerrado { background: var(--border); color: var(--text-dim); }
-        .estado-pill.pendiente { background: var(--amarillo-dim); color: var(--amarillo); }
-
-        .estado-dot-small {
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        /* FORMULARIO */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-grupo {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
+        .card-sub { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.4rem; }
+        .seccion { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+        .seccion-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .seccion-titulo { font-size: 0.82rem; font-weight: 500; }
+        .seccion-body { padding: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-grupo { display: flex; flex-direction: column; gap: 0.4rem; }
         .form-grupo.full { grid-column: 1 / -1; }
-
-        .form-label {
-            font-size: 0.68rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 0.7rem 0.9rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.85rem;
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            border-color: var(--text-dim);
-        }
-
+        .form-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
+        .form-input, .form-select, .form-textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 0.7rem 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text); outline: none; transition: border-color 0.2s; width: 100%; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--text-dim); }
         .form-select option { background: var(--surface2); }
         .form-textarea { resize: vertical; min-height: 80px; }
-
-        /* OPCIONES DINÁMICAS */
-        .opciones-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .opcion-fila {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .opcion-fila input {
-            flex: 1;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 0.6rem 0.9rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.85rem;
-            color: var(--text);
-            outline: none;
-        }
-
-        .btn-quitar {
-            width: 28px; height: 28px;
-            background: var(--acento-dim);
-            border: none;
-            border-radius: 3px;
-            color: var(--acento);
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: background 0.15s;
-        }
-
+        .opciones-lista { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem; }
+        .opcion-fila { display: flex; gap: 0.5rem; align-items: center; }
+        .opcion-fila input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 0.6rem 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text); outline: none; }
+        .btn-quitar { width: 28px; height: 28px; background: var(--acento-dim); border: none; border-radius: 3px; color: var(--acento); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
         .btn-quitar:hover { background: var(--acento); color: white; }
-
-        /* BOTONES */
-        .btn {
-            padding: 0.7rem 1.4rem;
-            border: none;
-            border-radius: 3px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            letter-spacing: 0.02em;
-        }
-
+        .btn { padding: 0.7rem 1.4rem; border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; }
         .btn-primario { background: var(--text); color: var(--bg); }
         .btn-primario:hover { background: #d0ccc4; }
+        .btn-primario:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
         .btn-secundario { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
         .btn-secundario:hover { border-color: var(--text-dim); }
         .btn-peligro { background: var(--acento-dim); color: var(--acento); border: 1px solid transparent; }
@@ -388,152 +66,41 @@
         .btn-exito { background: var(--verde-dim); color: var(--verde); border: 1px solid transparent; }
         .btn-exito:hover { background: var(--verde); color: white; }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
-
-        .btn-fila {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        /* UPLOAD */
-        .upload-zona {
-            background: var(--surface2);
-            border: 1px dashed var(--border);
-            border-radius: 4px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        .btn-fila { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        .upload-zona { background: var(--surface2); border: 1px dashed var(--border); border-radius: 4px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
         .upload-zona:hover { border-color: var(--text-dim); }
         .upload-zona input { display: none; }
-
-        .upload-icono {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.4;
-        }
-
+        .upload-icono { font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.4; }
         .upload-txt { font-size: 0.8rem; color: var(--text-dim); }
         .upload-txt strong { color: var(--text); }
-
-        /* SECCIÓN */
-        .seccion {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .seccion-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .seccion-titulo {
-            font-size: 0.82rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .seccion-body { padding: 1.5rem; }
-
-        /* RESULTADOS */
-        .resultado-barra {
-            margin-bottom: 1.2rem;
-        }
-
-        .resultado-barra-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.4rem;
-            font-size: 0.82rem;
-        }
-
-        .resultado-barra-nombre { font-weight: 500; }
-        .resultado-barra-num { color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
-
-        .barra-fondo {
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .barra-relleno {
-            height: 100%;
-            background: var(--text);
-            border-radius: 2px;
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 0%;
-        }
-
-        .barra-relleno.lider { background: var(--acento); }
-
-        /* MENSAJES */
-        .mensaje {
-            font-size: 0.8rem;
-            padding: 0.75rem 1rem;
-            border-radius: 3px;
-            margin-top: 1rem;
-            display: none;
-        }
-
+        .mensaje { font-size: 0.8rem; padding: 0.75rem 1rem; border-radius: 3px; margin-top: 1rem; display: none; }
         .mensaje.visible { display: block; }
         .mensaje.error { background: var(--acento-dim); color: var(--acento); border-left: 3px solid var(--acento); }
         .mensaje.exito { background: var(--verde-dim); color: var(--verde); border-left: 3px solid var(--verde); }
         .mensaje.info { background: var(--surface2); color: var(--text-dim); border-left: 3px solid var(--border); }
-
-        /* LOGIN */
-        .login-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-
-        .login-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 3rem;
-            width: 360px;
-        }
-
-        .login-titulo {
-            font-family: 'Fraunces', serif;
-            font-size: 1.8rem;
-            letter-spacing: -0.03em;
-            margin-bottom: 0.4rem;
-        }
-
+        .login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3rem; width: 360px; }
+        .login-titulo { font-family: 'Fraunces', serif; font-size: 1.8rem; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
         .login-titulo em { font-style: italic; color: var(--acento); }
         .login-sub { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 2rem; }
-
-        /* SEPARADOR */
-        .sep { height: 1px; background: var(--border); margin: 1.5rem 0; }
-
-        /* MONO */
+        .estado-pill { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 2rem; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+        .estado-pill.activo { background: var(--verde-dim); color: var(--verde); }
+        .estado-pill.cerrado { background: var(--border); color: var(--text-dim); }
+        .estado-dot-small { width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: pulso 2s infinite; }
+        @keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .resultado-barra { margin-bottom: 1.2rem; }
+        .resultado-barra-header { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.82rem; }
+        .resultado-barra-nombre { font-weight: 500; }
+        .resultado-barra-num { color: var(--text-dim); font-family: 'DM Mono', monospace; font-size: 0.75rem; }
+        .barra-fondo { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .barra-relleno { height: 100%; background: var(--text); border-radius: 2px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+        .barra-relleno.lider { background: var(--acento); }
         .mono { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-dim); }
-
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .contenido { margin-left: 0; padding: 1.5rem; }
-            .grid-cards { grid-template-columns: 1fr; }
-            .form-grid { grid-template-columns: 1fr; }
-        }
+        .proceso-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .proceso-info-item { display: flex; flex-direction: column; gap: 0.3rem; }
+        .proceso-info-label { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+        .proceso-info-valor { font-size: 0.85rem; }
+        @media (max-width: 900px) { .sidebar { display: none; } .contenido { margin-left: 0; padding: 1.5rem; } .grid-cards { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -561,56 +128,37 @@
         <div class="sidebar-logo-titulo">VotoChain</div>
         <div class="sidebar-logo-sub">Panel CNE · Admin</div>
     </div>
-
     <div class="sidebar-seccion">
         <div class="sidebar-seccion-titulo">General</div>
         <div class="sidebar-item activo" onclick="mostrarPagina('dashboard', this)">
-            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
-                <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
-            </svg>
+            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
             Dashboard
         </div>
     </div>
-
     <div class="sidebar-seccion">
         <div class="sidebar-seccion-titulo">Procesos electorales</div>
         <div class="sidebar-item" onclick="mostrarPagina('nuevo-proceso', this)">
-            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="11"/><line x1="5" y1="8" x2="11" y2="8"/>
-            </svg>
+            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="11"/><line x1="5" y1="8" x2="11" y2="8"/></svg>
             Nuevo proceso
         </div>
-        <div class="sidebar-item" onclick="mostrarPagina('procesos', this)">
-            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M2 4h12M2 8h8M2 12h10"/>
-            </svg>
-            Procesos activos
-            <span class="sidebar-badge badge-verde">2</span>
+        <div class="sidebar-item" onclick="mostrarPagina('proceso-activo', this)">
+            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+            Proceso activo
         </div>
         <div class="sidebar-item" onclick="mostrarPagina('resultados', this)">
-            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M2 12 L5 7 L8 9 L11 4 L14 6"/><polyline points="11,4 14,4 14,7"/>
-            </svg>
+            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L5 7 L8 9 L11 4 L14 6"/></svg>
             Resultados
         </div>
     </div>
-
     <div class="sidebar-seccion">
         <div class="sidebar-seccion-titulo">Padrón electoral</div>
         <div class="sidebar-item" onclick="mostrarPagina('padron', this)">
-            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M8 1a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/><path d="M1 14s1-4 7-4 7 4 7 4"/>
-            </svg>
+            <svg class="sidebar-item-icono" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/><path d="M1 14s1-4 7-4 7 4 7 4"/></svg>
             Gestionar padrón
         </div>
     </div>
-
     <div class="sidebar-footer">
-        <div class="sidebar-footer-txt">
-            Red: Hardhat Local<br>
-            <span id="sidebar-contrato">Contrato: —</span>
-        </div>
+        <div class="sidebar-footer-txt" id="sidebar-info">Cargando...</div>
     </div>
 </nav>
 
@@ -626,7 +174,6 @@
             </div>
             <button class="btn btn-secundario btn-sm" onclick="actualizarDashboard()">↻ Actualizar</button>
         </div>
-
         <div class="grid-cards">
             <div class="card">
                 <div class="card-label">Votos registrados</div>
@@ -634,33 +181,33 @@
                 <div class="card-sub">En blockchain</div>
             </div>
             <div class="card">
-                <div class="card-label">Militantes en padrón</div>
-                <div class="card-valor amarillo" id="dash-militantes">—</div>
-                <div class="card-sub">Habilitados para votar</div>
+                <div class="card-label">Proceso</div>
+                <div class="card-valor amarillo" style="font-size:1rem;padding-top:0.5rem" id="dash-titulo">—</div>
+                <div class="card-sub" id="dash-tipo">—</div>
             </div>
             <div class="card">
-                <div class="card-label">Participación</div>
-                <div class="card-valor" id="dash-participacion">—</div>
-                <div class="card-sub">Del padrón total</div>
+                <div class="card-label">Estado</div>
+                <div style="margin-top:0.5rem" id="dash-estado">—</div>
+                <div class="card-sub" id="dash-tiempo">—</div>
             </div>
         </div>
-
-        <div class="seccion">
-            <div class="seccion-header">
-                <div class="seccion-titulo">Proceso activo</div>
-                <div id="dash-estado-badge"></div>
-            </div>
-            <div class="seccion-body">
-                <div id="dash-proceso-info" style="font-size:0.85rem;color:var(--text-dim)">Cargando información del proceso...</div>
-            </div>
-        </div>
-
         <div class="seccion">
             <div class="seccion-header">
                 <div class="seccion-titulo">Resultados en tiempo real</div>
+                <span class="mono" id="dash-contrato">—</span>
             </div>
             <div class="seccion-body" id="dash-resultados">
                 <div style="font-size:0.8rem;color:var(--text-dim)">Cargando...</div>
+            </div>
+        </div>
+        <div class="seccion">
+            <div class="seccion-header">
+                <div class="seccion-titulo" style="color:var(--acento)">⚠ Zona de peligro</div>
+            </div>
+            <div class="seccion-body">
+                <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1rem">Cerrar la votación es irreversible. El contrato quedará bloqueado permanentemente.</div>
+                <button class="btn btn-peligro" id="btn-cerrar" onclick="cerrarVotacion()">Cerrar votación ahora</button>
+                <div class="mensaje" id="msg-cerrar"></div>
             </div>
         </div>
     </div>
@@ -673,11 +220,8 @@
                 <div class="page-subtitulo">Configura una elección interna o consulta ciudadana</div>
             </div>
         </div>
-
         <div class="seccion">
-            <div class="seccion-header">
-                <div class="seccion-titulo">Información del proceso</div>
-            </div>
+            <div class="seccion-header"><div class="seccion-titulo">Información del proceso</div></div>
             <div class="seccion-body">
                 <div class="form-grid">
                     <div class="form-grupo full">
@@ -686,7 +230,7 @@
                     </div>
                     <div class="form-grupo full">
                         <label class="form-label">Descripción</label>
-                        <textarea class="form-textarea" id="proc-descripcion" placeholder="Describe el proceso electoral, sus implicaciones y reglas..."></textarea>
+                        <textarea class="form-textarea" id="proc-descripcion" placeholder="Describe el proceso electoral..."></textarea>
                     </div>
                     <div class="form-grupo">
                         <label class="form-label">Tipo de proceso</label>
@@ -708,7 +252,6 @@
                 </div>
             </div>
         </div>
-
         <div class="seccion">
             <div class="seccion-header">
                 <div class="seccion-titulo">Opciones de votación</div>
@@ -716,16 +259,11 @@
             </div>
             <div class="seccion-body">
                 <div class="opciones-lista" id="opciones-lista"></div>
-                <div class="mensaje info visible" id="msg-opciones-tipo">
-                    Para una elección interna agrega los nombres de los candidatos.
-                </div>
+                <div class="mensaje info visible" id="msg-opciones-tipo">Para una elección interna agrega los nombres de los candidatos.</div>
             </div>
         </div>
-
         <div class="seccion">
-            <div class="seccion-header">
-                <div class="seccion-titulo">Período electoral</div>
-            </div>
+            <div class="seccion-header"><div class="seccion-titulo">Período electoral</div></div>
             <div class="seccion-body">
                 <div class="form-grid">
                     <div class="form-grupo">
@@ -747,7 +285,6 @@
                 </div>
             </div>
         </div>
-
         <div class="btn-fila">
             <button class="btn btn-primario" onclick="guardarProceso()">Crear proceso electoral</button>
             <button class="btn btn-secundario" onclick="limpiarFormulario()">Limpiar</button>
@@ -755,71 +292,33 @@
         <div class="mensaje" id="msg-proceso"></div>
     </div>
 
-    <!-- PROCESOS ACTIVOS -->
-    <div class="page" id="page-procesos">
+    <!-- PROCESO ACTIVO -->
+    <div class="page" id="page-proceso-activo">
         <div class="page-header">
             <div>
-                <div class="page-titulo">Procesos <em>activos</em></div>
-                <div class="page-subtitulo">Gestiona los procesos electorales en curso</div>
+                <div class="page-titulo">Proceso <em>activo</em></div>
+                <div class="page-subtitulo">Información del contrato desplegado</div>
+            </div>
+            <button class="btn btn-secundario btn-sm" onclick="cargarInfoProceso()">↻ Actualizar</button>
+        </div>
+        <div class="seccion">
+            <div class="seccion-header">
+                <div class="seccion-titulo" id="proceso-titulo-header">Cargando...</div>
+                <div id="proceso-estado-badge"></div>
+            </div>
+            <div class="seccion-body">
+                <div class="proceso-info-grid" id="proceso-info-grid">
+                    <div style="font-size:0.8rem;color:var(--text-dim)">Conectando con blockchain...</div>
+                </div>
             </div>
         </div>
-
-        <div class="tabla-container">
-            <div class="tabla-header">
-                <div class="tabla-titulo">Todos los procesos</div>
+        <div class="seccion">
+            <div class="seccion-header"><div class="seccion-titulo" style="color:var(--acento)">⚠ Cerrar votación</div></div>
+            <div class="seccion-body">
+                <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1rem">Esta acción es irreversible. El contrato quedará cerrado permanentemente en blockchain.</div>
+                <button class="btn btn-peligro" onclick="cerrarVotacion()">Cerrar votación ahora</button>
+                <div class="mensaje" id="msg-cerrar-proceso"></div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Proceso</th>
-                        <th>Tipo</th>
-                        <th>Votos</th>
-                        <th>Período</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-procesos">
-                    <tr>
-                        <td>Elección Presidente 2026</td>
-                        <td><span class="mono">elección</span></td>
-                        <td>247</td>
-                        <td><span class="mono">15/03 — 22/03</span></td>
-                        <td><span class="estado-pill activo"><span class="estado-dot-small"></span>Activo</span></td>
-                        <td>
-                            <div class="btn-fila">
-                                <button class="btn btn-secundario btn-sm" onclick="mostrarPagina('resultados', document.querySelector('[onclick*=resultados]'))">Ver</button>
-                                <button class="btn btn-peligro btn-sm" onclick="confirmarCierre()">Cerrar</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Consulta Ley de Aguas</td>
-                        <td><span class="mono">consulta</span></td>
-                        <td>183</td>
-                        <td><span class="mono">10/03 — 17/03</span></td>
-                        <td><span class="estado-pill activo"><span class="estado-dot-small"></span>Activo</span></td>
-                        <td>
-                            <div class="btn-fila">
-                                <button class="btn btn-secundario btn-sm">Ver</button>
-                                <button class="btn btn-peligro btn-sm" onclick="confirmarCierre()">Cerrar</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Reforma Estatutos 2025</td>
-                        <td><span class="mono">consulta</span></td>
-                        <td>412</td>
-                        <td><span class="mono">01/12 — 08/12</span></td>
-                        <td><span class="estado-pill cerrado">Cerrado</span></td>
-                        <td>
-                            <div class="btn-fila">
-                                <button class="btn btn-secundario btn-sm">Ver</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
@@ -832,39 +331,32 @@
             </div>
             <button class="btn btn-secundario btn-sm" onclick="cargarResultados()">↻ Actualizar</button>
         </div>
-
         <div class="grid-cards" style="grid-template-columns:1fr 1fr;">
             <div class="card">
                 <div class="card-label">Total de votos</div>
                 <div class="card-valor" id="res-total">—</div>
-                <div class="card-sub" id="res-participacion">Calculando participación...</div>
+                <div class="card-sub" id="res-participacion">—</div>
             </div>
             <div class="card">
-                <div class="card-label">Candidato / Opción líder</div>
-                <div class="card-valor verde" id="res-lider" style="font-size:1.2rem">—</div>
+                <div class="card-label">Opción líder</div>
+                <div class="card-valor verde" id="res-lider" style="font-size:1.2rem;padding-top:0.3rem">—</div>
                 <div class="card-sub" id="res-lider-votos"></div>
             </div>
         </div>
-
         <div class="seccion">
             <div class="seccion-header">
-                <div class="seccion-titulo">Desglose por candidato</div>
+                <div class="seccion-titulo">Desglose por opción</div>
                 <span class="mono">Datos en tiempo real · blockchain</span>
             </div>
             <div class="seccion-body" id="res-desglose">
                 <div style="font-size:0.8rem;color:var(--text-dim)">Cargando desde blockchain...</div>
             </div>
         </div>
-
         <div class="seccion">
-            <div class="seccion-header">
-                <div class="seccion-titulo">Hash del contrato</div>
-            </div>
+            <div class="seccion-header"><div class="seccion-titulo">Dirección del contrato</div></div>
             <div class="seccion-body">
                 <div class="mono" id="res-hash">—</div>
-                <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.5rem">
-                    Cualquier ciudadano puede verificar estos resultados en la blockchain usando esta dirección.
-                </div>
+                <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.5rem">Cualquier ciudadano puede verificar estos resultados usando esta dirección.</div>
             </div>
         </div>
     </div>
@@ -877,17 +369,11 @@
                 <div class="page-subtitulo">Carga y actualiza los tres registros electorales</div>
             </div>
         </div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem">
-
             <div class="seccion" style="margin-bottom:0">
-                <div class="seccion-header">
-                    <div class="seccion-titulo">🏛 Registro Civil</div>
-                </div>
+                <div class="seccion-header"><div class="seccion-titulo">🏛 Registro Civil</div></div>
                 <div class="seccion-body">
-                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">
-                        Verifica ciudadanos activos / fallecidos
-                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">Verifica ciudadanos activos / fallecidos</div>
                     <div class="upload-zona" onclick="document.getElementById('upload-civil').click()">
                         <input type="file" id="upload-civil" accept=".xlsx" onchange="subirPadron(this, 'civil', 'msg-civil')">
                         <div class="upload-icono">📊</div>
@@ -896,15 +382,10 @@
                     <div class="mensaje" id="msg-civil"></div>
                 </div>
             </div>
-
             <div class="seccion" style="margin-bottom:0">
-                <div class="seccion-header">
-                    <div class="seccion-titulo">🗳 CNE</div>
-                </div>
+                <div class="seccion-header"><div class="seccion-titulo">🗳 CNE</div></div>
                 <div class="seccion-body">
-                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">
-                        Verifica derecho al voto activo
-                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">Verifica derecho al voto activo</div>
                     <div class="upload-zona" onclick="document.getElementById('upload-cne').click()">
                         <input type="file" id="upload-cne" accept=".xlsx" onchange="subirPadron(this, 'cne', 'msg-cne')">
                         <div class="upload-icono">📊</div>
@@ -913,15 +394,10 @@
                     <div class="mensaje" id="msg-cne"></div>
                 </div>
             </div>
-
             <div class="seccion" style="margin-bottom:0">
-                <div class="seccion-header">
-                    <div class="seccion-titulo">🎗 Partido</div>
-                </div>
+                <div class="seccion-header"><div class="seccion-titulo">🎗 Partido</div></div>
                 <div class="seccion-body">
-                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">
-                        Militantes activos con PIN
-                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:1rem">Militantes activos con PIN</div>
                     <div class="upload-zona" onclick="document.getElementById('upload-partido').click()">
                         <input type="file" id="upload-partido" accept=".xlsx" onchange="subirPadron(this, 'partido', 'msg-partido')">
                         <div class="upload-icono">📊</div>
@@ -930,20 +406,12 @@
                     <div class="mensaje" id="msg-partido"></div>
                 </div>
             </div>
-
         </div>
-
         <div class="seccion">
-            <div class="seccion-header">
-                <div class="seccion-titulo">Cargar padrón al contrato</div>
-            </div>
+            <div class="seccion-header"><div class="seccion-titulo">Cargar padrón al contrato</div></div>
             <div class="seccion-body">
-                <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6">
-                    Una vez subidos los tres xlsx, este botón verifica la consistencia entre los tres registros y carga al contrato solo los ciudadanos que pasen las tres verificaciones.
-                </div>
-                <div class="btn-fila">
-                    <button class="btn btn-primario" onclick="cargarPadronContrato()">Cargar padrón al blockchain</button>
-                </div>
+                <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6">Una vez subidos los tres xlsx, este botón verifica la consistencia entre los tres registros y carga al contrato solo los ciudadanos que pasen las tres verificaciones.</div>
+                <button class="btn btn-primario" onclick="cargarPadronContrato()">Cargar padrón al blockchain</button>
                 <div class="mensaje" id="msg-carga-padron"></div>
             </div>
         </div>
@@ -955,6 +423,7 @@
     const API = "http://192.168.100.5:3000";
     const CANDIDATOS = ["Jaime Roldós", "Rafael Correa", "Noboa"];
     const PASSWORD_ADMIN = "admin123";
+    let infoProceso = null;
 
     // LOGIN
     function iniciarSesion() {
@@ -963,7 +432,6 @@
         if (pwd === PASSWORD_ADMIN) {
             document.getElementById("login-overlay").style.display = "none";
             actualizarDashboard();
-            cargarResultados();
         } else {
             msg.className = "mensaje error visible";
             msg.textContent = "Contraseña incorrecta.";
@@ -982,10 +450,50 @@
         if (el) el.classList.add("activo");
         if (id === "resultados") cargarResultados();
         if (id === "dashboard") actualizarDashboard();
+        if (id === "proceso-activo") cargarInfoProceso();
+    }
+
+    // CARGAR INFO DEL PROCESO DESDE BLOCKCHAIN
+    async function cargarInfoProceso() {
+        try {
+            const res = await fetch(API + "/api/info-proceso");
+            const data = await res.json();
+            if (!data.exito) return;
+            infoProceso = data;
+
+            // Actualizar sidebar
+            document.getElementById("sidebar-info").innerHTML =
+                "Contrato:<br>" + "0x5FbDB...0aa3" + "<br><br>" +
+                (data.cerrado ? "Estado: CERRADO" : "Estado: ACTIVO");
+
+            // Actualizar página proceso-activo
+            document.getElementById("proceso-titulo-header").textContent = data.titulo;
+
+            const estadoBadge = document.getElementById("proceso-estado-badge");
+            if (data.cerrado) {
+                estadoBadge.innerHTML = '<span class="estado-pill cerrado">Cerrado</span>';
+            } else {
+                estadoBadge.innerHTML = '<span class="estado-pill activo"><span class="estado-dot-small"></span>Activo</span>';
+            }
+
+            const grid = document.getElementById("proceso-info-grid");
+            const inicio = new Date(data.inicioVotacion * 1000).toLocaleString("es-EC");
+            const fin = new Date(data.finVotacion * 1000).toLocaleString("es-EC");
+            grid.innerHTML =
+                '<div class="proceso-info-item"><div class="proceso-info-label">Título</div><div class="proceso-info-valor">' + data.titulo + '</div></div>' +
+                '<div class="proceso-info-item"><div class="proceso-info-label">Tipo</div><div class="proceso-info-valor">' + data.tipo + '</div></div>' +
+                '<div class="proceso-info-item"><div class="proceso-info-label">Inicio votación</div><div class="proceso-info-valor">' + inicio + '</div></div>' +
+                '<div class="proceso-info-item"><div class="proceso-info-label">Fin votación</div><div class="proceso-info-valor">' + fin + '</div></div>';
+
+            return data;
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     // DASHBOARD
     async function actualizarDashboard() {
+        const info = await cargarInfoProceso();
         try {
             const res = await fetch(API + "/api/resultados");
             const data = await res.json();
@@ -996,12 +504,27 @@
             const lider = data.resultados.find(r => r.votos === max);
 
             document.getElementById("dash-votos").textContent = total;
-            document.getElementById("dash-militantes").textContent = "4";
-            document.getElementById("dash-participacion").textContent = total > 0 ? Math.round(total / 4 * 100) + "%" : "0%";
 
-            document.getElementById("dash-proceso-info").innerHTML =
-                '<strong style="color:var(--text)">Elección Presidente del Partido 2026</strong><br>' +
-                '<span style="color:var(--text-dim)">Tipo: Elección interna · ' + total + ' votos registrados · Líder actual: ' + (lider ? lider.candidato : '—') + '</span>';
+            if (info) {
+                document.getElementById("dash-titulo").textContent = info.titulo;
+                document.getElementById("dash-tipo").textContent = info.tipo;
+                document.getElementById("dash-contrato").textContent = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+                const fin = new Date(info.finVotacion * 1000);
+                const ahora = new Date();
+                const diff = fin - ahora;
+                if (info.cerrado) {
+                    document.getElementById("dash-estado").innerHTML = '<span class="estado-pill cerrado">Cerrado</span>';
+                    document.getElementById("dash-tiempo").textContent = "Votación cerrada";
+                } else if (diff > 0) {
+                    const horas = Math.floor(diff / 3600000);
+                    const mins = Math.floor((diff % 3600000) / 60000);
+                    document.getElementById("dash-estado").innerHTML = '<span class="estado-pill activo"><span class="estado-dot-small"></span>Activo</span>';
+                    document.getElementById("dash-tiempo").textContent = "Cierra en " + horas + "h " + mins + "m";
+                } else {
+                    document.getElementById("dash-estado").innerHTML = '<span class="estado-pill cerrado">Expirado</span>';
+                    document.getElementById("dash-tiempo").textContent = "Período de votación terminado";
+                }
+            }
 
             const desglose = document.getElementById("dash-resultados");
             desglose.innerHTML = "";
@@ -1010,13 +533,9 @@
                 const esLider = r.votos === max && max > 0;
                 desglose.innerHTML += '<div class="resultado-barra"><div class="resultado-barra-header"><span class="resultado-barra-nombre">' + r.candidato + '</span><span class="resultado-barra-num">' + r.votos + ' votos · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno' + (esLider ? ' lider' : '') + '" data-p="' + pct + '"></div></div></div>';
             });
-
-            setTimeout(() => {
-                document.querySelectorAll(".barra-relleno").forEach(b => b.style.width = b.dataset.p + "%");
-            }, 100);
-
+            setTimeout(() => { document.querySelectorAll(".barra-relleno").forEach(b => b.style.width = b.dataset.p + "%"); }, 100);
         } catch(e) {
-            document.getElementById("dash-proceso-info").textContent = "No se pudo conectar al servidor.";
+            console.error(e);
         }
     }
 
@@ -1032,26 +551,38 @@
             const lider = data.resultados.find(r => r.votos === max);
 
             document.getElementById("res-total").textContent = total;
-            document.getElementById("res-participacion").textContent = total > 0 ? Math.round(total / 4 * 100) + "% de participación" : "Sin votos aún";
+            document.getElementById("res-participacion").textContent = total + " votos registrados en blockchain";
             document.getElementById("res-lider").textContent = lider ? lider.candidato : "—";
             document.getElementById("res-lider-votos").textContent = lider ? lider.votos + " votos" : "";
-            document.getElementById("res-hash").textContent = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-            document.getElementById("sidebar-contrato").textContent = "0xe7f172...0512";
+            document.getElementById("res-hash").textContent = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
             const desglose = document.getElementById("res-desglose");
             desglose.innerHTML = "";
             data.resultados.forEach(r => {
                 const pct = total > 0 ? (r.votos / total * 100) : 0;
                 const esLider = r.votos === max && max > 0;
-                desglose.innerHTML += '<div class="resultado-barra"><div class="resultado-barra-header"><span class="resultado-barra-nombre">' + r.candidato + (esLider ? ' <span style="font-size:0.65rem;color:var(--acento);letter-spacing:0.08em;text-transform:uppercase;margin-left:0.5rem">— Líder</span>' : '') + '</span><span class="resultado-barra-num">' + r.votos + ' votos · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno' + (esLider ? ' lider' : '') + '" data-p="' + pct + '"></div></div></div>';
+                desglose.innerHTML += '<div class="resultado-barra"><div class="resultado-barra-header"><span class="resultado-barra-nombre">' + r.candidato + (esLider ? ' <span style="font-size:0.65rem;color:var(--acento);margin-left:0.5rem">— Líder</span>' : '') + '</span><span class="resultado-barra-num">' + r.votos + ' votos · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno' + (esLider ? ' lider' : '') + '" data-p="' + pct + '"></div></div></div>';
             });
-
-            setTimeout(() => {
-                document.querySelectorAll(".barra-relleno").forEach(b => b.style.width = b.dataset.p + "%");
-            }, 100);
-
+            setTimeout(() => { document.querySelectorAll(".barra-relleno").forEach(b => b.style.width = b.dataset.p + "%"); }, 100);
         } catch(e) {
             document.getElementById("res-desglose").innerHTML = "<div style='font-size:0.8rem;color:var(--text-dim)'>No se pudo conectar al servidor.</div>";
+        }
+    }
+
+    // CERRAR VOTACIÓN
+    async function cerrarVotacion() {
+        if (!confirm("¿Estás seguro? Esta acción es irreversible.")) return;
+        const msgIds = ["msg-cerrar", "msg-cerrar-proceso"];
+        msgIds.forEach(id => { const el = document.getElementById(id); if(el) { el.className = "mensaje info visible"; el.textContent = "Enviando transacción..."; } });
+        try {
+            const res = await fetch(API + "/api/cerrar-votacion", { method: "POST", headers: { "Content-Type": "application/json" } });
+            const data = await res.json();
+            const tipo = data.exito ? "exito" : "error";
+            const txt = data.exito ? "✓ " + data.mensaje : "⚠ " + data.mensaje;
+            msgIds.forEach(id => { const el = document.getElementById(id); if(el) { el.className = "mensaje " + tipo + " visible"; el.textContent = txt; } });
+            if (data.exito) actualizarDashboard();
+        } catch(e) {
+            msgIds.forEach(id => { const el = document.getElementById(id); if(el) { el.className = "mensaje error visible"; el.textContent = "Error de conexión."; } });
         }
     }
 
@@ -1061,14 +592,14 @@
     function actualizarTipo() {
         const tipo = document.getElementById("proc-tipo").value;
         const msg = document.getElementById("msg-opciones-tipo");
-        opciones = [];
-
         if (tipo === "consulta_sino") {
             opciones = ["Sí", "No"];
             msg.textContent = "Consulta Sí / No — opciones predefinidas.";
         } else if (tipo === "eleccion") {
+            opciones = [];
             msg.textContent = "Para una elección interna agrega los nombres de los candidatos.";
         } else {
+            opciones = [];
             msg.textContent = "Agrega las opciones de la consulta.";
         }
         renderOpciones();
@@ -1085,41 +616,61 @@
         });
     }
 
-    function agregarOpcion() {
-        opciones.push("");
-        renderOpciones();
-    }
+    function agregarOpcion() { opciones.push(""); renderOpciones(); }
+    function quitarOpcion(i) { opciones.splice(i, 1); renderOpciones(); }
+    function mostrarPDF(input) { if (input.files[0]) document.getElementById("proc-pdf-nombre").textContent = "✓ " + input.files[0].name; }
 
-    function quitarOpcion(i) {
-        opciones.splice(i, 1);
-        renderOpciones();
-    }
-
-    function mostrarPDF(input) {
-        if (input.files[0]) {
-            document.getElementById("proc-pdf-nombre").textContent = "✓ " + input.files[0].name;
-        }
-    }
-
-    function guardarProceso() {
+    async function guardarProceso() {
         const titulo = document.getElementById("proc-titulo").value.trim();
+        const tipo = document.getElementById("proc-tipo").value;
         const msg = document.getElementById("msg-proceso");
+        const btn = document.querySelector("#page-nuevo-proceso .btn-primario");
 
-        if (!titulo) {
+        if (!titulo) { msg.className = "mensaje error visible"; msg.textContent = "El título es obligatorio."; return; }
+        if (opciones.filter(o => o.trim()).length < 2) { msg.className = "mensaje error visible"; msg.textContent = "Agrega al menos 2 opciones."; return; }
+
+        const inicioInscripcion = document.getElementById("proc-inicio-inscripcion").value;
+        const finInscripcion = document.getElementById("proc-fin-inscripcion").value;
+        const inicioVotacion = document.getElementById("proc-inicio-votacion").value;
+        const finVotacion = document.getElementById("proc-fin-votacion").value;
+
+        if (!inicioVotacion || !finVotacion) { msg.className = "mensaje error visible"; msg.textContent = "Las fechas de votación son obligatorias."; return; }
+
+        btn.disabled = true;
+        btn.textContent = "Desplegando contrato...";
+        msg.className = "mensaje info visible";
+        msg.textContent = "Creando proceso en blockchain. Esto puede tardar unos segundos...";
+
+        try {
+            const res = await fetch(API + "/api/crear-proceso", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    titulo, tipo,
+                    opciones: opciones.filter(o => o.trim()),
+                    inicioInscripcion: inicioInscripcion || new Date().toISOString(),
+                    finInscripcion: finInscripcion || new Date(Date.now() + 3600000).toISOString(),
+                    inicioVotacion,
+                    finVotacion
+                })
+            });
+            const data = await res.json();
+            if (data.exito) {
+                msg.className = "mensaje exito visible";
+                msg.textContent = "✓ " + data.mensaje;
+                limpiarFormulario();
+                setTimeout(() => actualizarDashboard(), 2000);
+            } else {
+                msg.className = "mensaje error visible";
+                msg.textContent = "⚠ " + data.mensaje;
+            }
+        } catch(e) {
             msg.className = "mensaje error visible";
-            msg.textContent = "El título del proceso es obligatorio.";
-            return;
+            msg.textContent = "Error de conexión con el servidor.";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Crear proceso electoral";
         }
-
-        if (opciones.filter(o => o.trim()).length < 2) {
-            msg.className = "mensaje error visible";
-            msg.textContent = "Debes agregar al menos 2 opciones de votación.";
-            return;
-        }
-
-        // Simular guardado
-        msg.className = "mensaje exito visible";
-        msg.textContent = "✓ Proceso \"" + titulo + "\" creado. Para activarlo despliega el contrato desde la terminal.";
     }
 
     function limpiarFormulario() {
@@ -1134,46 +685,28 @@
     async function subirPadron(input, tipo, msgId) {
         const msg = document.getElementById(msgId);
         if (!input.files[0]) return;
-
         msg.className = "mensaje info visible";
         msg.textContent = "Subiendo " + input.files[0].name + "...";
-
         try {
             const buffer = await input.files[0].arrayBuffer();
-            const res = await fetch(API + "/api/subir-padron?tipo=" + tipo, {
-                method: "POST",
-                headers: { "Content-Type": "application/octet-stream" },
-                body: buffer
-            });
+            const res = await fetch(API + "/api/subir-padron?tipo=" + tipo, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: buffer });
             const data = await res.json();
-            if (data.exito) {
-                msg.className = "mensaje exito visible";
-                msg.textContent = "✓ " + data.mensaje;
-            } else {
-                msg.className = "mensaje error visible";
-                msg.textContent = "⚠ " + data.mensaje;
-            }
+            msg.className = "mensaje " + (data.exito ? "exito" : "error") + " visible";
+            msg.textContent = (data.exito ? "✓ " : "⚠ ") + data.mensaje;
         } catch(e) {
             msg.className = "mensaje error visible";
-            msg.textContent = "Error de conexión con el servidor.";
+            msg.textContent = "Error de conexión.";
         }
     }
 
     function cargarPadronContrato() {
         const msg = document.getElementById("msg-carga-padron");
         msg.className = "mensaje info visible";
-        msg.textContent = "Para cargar el padrón al contrato ejecuta en tu terminal: node scripts/cargar-padrones.js";
+        msg.textContent = "Ejecuta en tu terminal: node scripts/cargar-padrones.js --network localhost";
     }
 
-    function confirmarCierre() {
-        if (confirm("¿Estás seguro de que quieres cerrar este proceso electoral? Esta acción no se puede deshacer.")) {
-            alert("Para cerrar el proceso ejecuta en tu terminal el script de cierre. Esta función se conectará al contrato en la próxima versión.");
-        }
-    }
-
-    // Inicializar opciones
     actualizarTipo();
-    setInterval(cargarResultados, 15000);
+    setInterval(actualizarDashboard, 15000);
 </script>
 </body>
 </html>
