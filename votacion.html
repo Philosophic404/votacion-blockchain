@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VotoChain — Ecuador</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --negro: #0a0a0a; --blanco: #f7f5f0; --acento: #c8392b; --gris: #8a8680; --gris-claro: #e8e5e0; --verde: #2a7a4b; }
         body { font-family: 'DM Sans', sans-serif; background: var(--blanco); color: var(--negro); min-height: 100vh; display: flex; flex-direction: column; }
+
         header { padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gris-claro); }
         .logo { display: flex; align-items: center; gap: 1rem; }
         .logo-icono { width: 36px; height: 36px; background: var(--negro); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -18,68 +19,115 @@
         .estado-badge { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--gris); letter-spacing: 0.05em; text-transform: uppercase; }
         .estado-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); animation: pulso 2s infinite; }
         @keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
         main { flex: 1; display: grid; grid-template-columns: 1fr 1fr; max-width: 1100px; margin: 0 auto; width: 100%; padding: 4rem 3rem; gap: 6rem; }
-        .col-izq { display: flex; flex-direction: column; gap: 2.5rem; }
+
+        /* COLUMNA IZQUIERDA */
+        .col-izq { display: flex; flex-direction: column; gap: 2rem; }
         .titulo-seccion { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gris); font-weight: 500; }
-        h1 { font-family: 'DM Serif Display', serif; font-size: 3rem; line-height: 1.05; letter-spacing: -0.03em; }
+        h1 { font-family: 'DM Serif Display', serif; font-size: 2.8rem; line-height: 1.05; letter-spacing: -0.03em; }
         h1 em { font-style: italic; color: var(--acento); }
-        .descripcion { font-size: 0.95rem; color: var(--gris); line-height: 1.7; font-weight: 300; max-width: 380px; }
-        .periodos { display: flex; flex-direction: column; }
-        .periodo { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gris-claro); }
-        .periodo:first-child { border-top: 1px solid var(--gris-claro); }
-        .periodo-num { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--gris-claro); width: 2rem; flex-shrink: 0; }
-        .periodo.activo .periodo-num { color: var(--acento); }
-        .periodo.completado .periodo-num { color: var(--verde); }
-        .periodo-info { flex: 1; }
-        .periodo-nombre { font-size: 0.85rem; font-weight: 500; }
-        .periodo-tiempo { font-size: 0.75rem; color: var(--gris); margin-top: 2px; }
-        .periodo-estado { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.6rem; border-radius: 2rem; font-weight: 500; }
-        .periodo.activo .periodo-estado { background: #fef2f2; color: var(--acento); }
-        .periodo.completado .periodo-estado { background: #f0fdf4; color: var(--verde); }
-        .periodo.pendiente .periodo-estado { background: var(--gris-claro); color: var(--gris); }
+
+        .proceso-card { background: white; border: 1px solid var(--gris-claro); border-radius: 4px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .proceso-card-titulo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; letter-spacing: -0.02em; line-height: 1.2; }
+        .proceso-card-tipo { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris); }
+        .proceso-card-sep { height: 1px; background: var(--gris-claro); }
+        .proceso-fechas { display: flex; flex-direction: column; gap: 0.4rem; }
+        .proceso-fecha-fila { display: flex; justify-content: space-between; font-size: 0.78rem; }
+        .proceso-fecha-label { color: var(--gris); }
+        .proceso-fecha-valor { font-family: 'DM Mono', monospace; font-size: 0.72rem; }
+
+        /* CUENTA REGRESIVA */
+        .cuenta-regresiva { background: var(--negro); color: var(--blanco); border-radius: 4px; padding: 1.5rem; text-align: center; }
+        .cuenta-regresiva-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gris); margin-bottom: 1rem; }
+        .cuenta-regresiva-numeros { display: flex; justify-content: center; gap: 1rem; }
+        .cuenta-num { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+        .cuenta-num-val { font-family: 'DM Serif Display', serif; font-size: 2rem; line-height: 1; }
+        .cuenta-num-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris); }
+        .cuenta-regresiva-msg { font-size: 0.78rem; color: var(--gris); margin-top: 1rem; }
+
+        /* DOCUMENTO */
+        .documento-card { background: white; border: 1px solid var(--gris-claro); border-radius: 4px; padding: 1.25rem 1.5rem; display: none; }
+        .documento-card.visible { display: block; }
+        .documento-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .documento-info { display: flex; align-items: center; gap: 0.75rem; }
+        .documento-icono { font-size: 1.4rem; flex-shrink: 0; }
+        .documento-nombre { font-size: 0.85rem; font-weight: 500; }
+        .documento-tipo { font-size: 0.7rem; color: var(--gris); margin-top: 2px; }
+        .documento-btns { display: flex; gap: 0.5rem; flex-shrink: 0; }
+        .btn-doc { padding: 0.4rem 0.8rem; border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .btn-doc-ver { background: var(--negro); color: var(--blanco); border: none; }
+        .btn-doc-ver:hover { background: #2a2a2a; }
+        .btn-doc-dl { background: white; color: var(--negro); border: 1px solid var(--gris-claro); }
+        .btn-doc-dl:hover { border-color: var(--negro); }
+        .documento-no-disponible { font-size: 0.78rem; color: var(--gris); padding: 0.5rem 0; display: none; }
+        .documento-no-disponible.visible { display: block; }
+
+        /* COLUMNA DERECHA */
         .col-der { display: flex; flex-direction: column; gap: 1.5rem; }
         .panel { background: white; border: 1px solid var(--gris-claro); border-radius: 4px; padding: 2rem; display: none; flex-direction: column; gap: 1.5rem; animation: aparecer 0.4s ease; }
         .panel.visible { display: flex; }
         @keyframes aparecer { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .panel-titulo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; letter-spacing: -0.02em; }
+
         .campo { display: flex; flex-direction: column; gap: 0.4rem; }
         .campo label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); font-weight: 500; }
         .campo input { border: 1px solid var(--gris-claro); border-radius: 3px; padding: 0.75rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: var(--blanco); color: var(--negro); transition: border-color 0.2s; outline: none; }
         .campo input:focus { border-color: var(--negro); }
+
         .candidatos-lista { display: flex; flex-direction: column; gap: 0.5rem; }
         .candidato-opcion { border: 1px solid var(--gris-claro); border-radius: 3px; padding: 1rem 1.2rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: var(--blanco); }
         .candidato-opcion:hover { border-color: var(--negro); }
         .candidato-opcion.seleccionado { border-color: var(--negro); background: var(--negro); color: var(--blanco); }
         .candidato-nombre { font-size: 0.9rem; font-weight: 500; }
-        .candidato-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gris-claro); transition: all 0.2s; flex-shrink: 0; }
+        .candidato-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gris-claro); flex-shrink: 0; }
         .candidato-opcion.seleccionado .candidato-check { background: var(--blanco); border-color: var(--blanco); }
+
         .btn { padding: 0.85rem 1.5rem; border: none; border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em; width: 100%; }
         .btn-primario { background: var(--negro); color: var(--blanco); }
         .btn-primario:hover { background: #2a2a2a; }
         .btn-primario:disabled { background: var(--gris-claro); color: var(--gris); cursor: not-allowed; }
-        .btn-secundario { background: white; color: var(--negro); border: 1px solid var(--gris-claro); }
-        .btn-secundario:hover { border-color: var(--negro); }
+        .btn-abstencion { background: white; color: var(--gris); border: 1px solid var(--gris-claro); font-size: 0.8rem; }
+        .btn-abstencion:hover { border-color: var(--gris); }
+
         .mensaje { font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: 3px; display: none; }
         .mensaje.visible { display: block; }
         .mensaje.error { background: #fef2f2; color: var(--acento); border-left: 3px solid var(--acento); }
         .mensaje.exito { background: #f0fdf4; color: var(--verde); border-left: 3px solid var(--verde); }
         .mensaje.info { background: #f8f7f5; color: var(--gris); border-left: 3px solid var(--gris-claro); }
+
         .bienvenida { font-size: 1rem; font-weight: 500; color: var(--verde); padding: 0.75rem 1rem; background: #f0fdf4; border-radius: 3px; }
-        .resultado-item { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.2rem; }
+
+        /* Panel inscripción */
+        .inscripcion-panel { text-align: center; padding: 1rem 0; }
+        .inscripcion-icono { font-size: 2rem; margin-bottom: 0.75rem; }
+        .inscripcion-titulo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 0.4rem; }
+        .inscripcion-txt { font-size: 0.82rem; color: var(--gris); line-height: 1.6; }
+
+        /* Panel resultados post-voto */
+        .voto-exitoso { text-align: center; padding: 1rem 0 0.5rem; }
+        .voto-exitoso-icono { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .voto-exitoso-titulo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .voto-exitoso-sub { font-size: 0.8rem; color: var(--gris); }
+        .resultado-item { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
         .resultado-header { display: flex; justify-content: space-between; align-items: baseline; }
-        .resultado-nombre { font-size: 0.9rem; font-weight: 500; }
-        .resultado-votos { font-size: 0.8rem; color: var(--gris); }
+        .resultado-nombre { font-size: 0.88rem; font-weight: 500; }
+        .resultado-votos { font-size: 0.78rem; color: var(--gris); }
         .barra-fondo { height: 3px; background: var(--gris-claro); border-radius: 2px; overflow: hidden; }
-        .barra-relleno { height: 100%; background: var(--negro); border-radius: 2px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+        .barra-relleno { height: 100%; background: var(--negro); border-radius: 2px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0%; }
         .resultado-item.ganador .barra-relleno { background: var(--acento); }
-        .ganador-badge { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--acento); font-weight: 500; }
-        .info-blockchain { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--gris-claro); }
-        .info-fila { display: flex; justify-content: space-between; font-size: 0.75rem; }
+        .ganador-badge { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acento); font-weight: 500; margin-left: 0.4rem; }
+        .participacion-info { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--gris); padding-top: 0.75rem; border-top: 1px solid var(--gris-claro); }
+
+        .info-blockchain { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 1rem; border-top: 1px solid var(--gris-claro); }
+        .info-fila { display: flex; justify-content: space-between; font-size: 0.74rem; }
         .info-clave { color: var(--gris); }
-        .info-valor { font-family: monospace; font-size: 0.7rem; color: var(--negro); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .info-valor { font-family: 'DM Mono', monospace; font-size: 0.68rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
         footer { padding: 1.5rem 3rem; border-top: 1px solid var(--gris-claro); display: flex; justify-content: space-between; align-items: center; }
-        .footer-txt { font-size: 0.72rem; color: var(--gris); letter-spacing: 0.03em; }
-        .footer-hash { font-family: monospace; font-size: 0.65rem; color: var(--gris); }
+        .footer-txt { font-size: 0.72rem; color: var(--gris); }
+        .footer-hash { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--gris); }
+
         @media (max-width: 768px) { main { grid-template-columns: 1fr; gap: 3rem; padding: 2rem 1.5rem; } header { padding: 1.5rem; } h1 { font-size: 2.2rem; } }
     </style>
 </head>
@@ -102,44 +150,64 @@
 </header>
 
 <main>
+    <!-- COLUMNA IZQUIERDA -->
     <div class="col-izq">
         <div>
             <div class="titulo-seccion">Sistema Electoral</div>
             <h1>Democracia <em>real</em> en cadena</h1>
         </div>
-        <p class="descripcion">Cada voto se registra en blockchain: inmutable, transparente y auditable por cualquier ciudadano. Sin intermediarios. Sin posibilidad de manipulación.</p>
-        <div class="periodos">
-            <div class="periodo completado">
-                <div class="periodo-num">01</div>
-                <div class="periodo-info">
-                    <div class="periodo-nombre">Inscripción</div>
-                    <div class="periodo-tiempo">Padrón cargado por el CNE</div>
+
+        <!-- Info del proceso -->
+        <div class="proceso-card" id="proceso-card">
+            <div class="proceso-card-tipo" id="proceso-tipo">Cargando...</div>
+            <div class="proceso-card-titulo" id="proceso-titulo">—</div>
+            <p class="descripcion" id="proceso-descripcion"></p>
+            <div class="proceso-card-sep"></div>
+            <div class="proceso-fechas">
+                <div class="proceso-fecha-fila">
+                    <span class="proceso-fecha-label">Inicio votación</span>
+                    <span class="proceso-fecha-valor" id="fecha-inicio">—</span>
                 </div>
-                <div class="periodo-estado">Completado</div>
-            </div>
-            <div class="periodo activo">
-                <div class="periodo-num">02</div>
-                <div class="periodo-info">
-                    <div class="periodo-nombre">Votación</div>
-                    <div class="periodo-tiempo">En curso</div>
+                <div class="proceso-fecha-fila">
+                    <span class="proceso-fecha-label">Fin votación</span>
+                    <span class="proceso-fecha-valor" id="fecha-fin">—</span>
                 </div>
-                <div class="periodo-estado">Activo</div>
             </div>
-            <div class="periodo pendiente">
-                <div class="periodo-num">03</div>
-                <div class="periodo-info">
-                    <div class="periodo-nombre">Resultados</div>
-                    <div class="periodo-tiempo">Disponible al cerrar</div>
-                </div>
-                <div class="periodo-estado">Pendiente</div>
+        </div>
+
+        <!-- Cuenta regresiva (solo durante inscripción) -->
+        <div class="cuenta-regresiva" id="cuenta-regresiva" style="display:none">
+            <div class="cuenta-regresiva-label">La votación abre en</div>
+            <div class="cuenta-regresiva-numeros">
+                <div class="cuenta-num"><span class="cuenta-num-val" id="cr-dias">00</span><span class="cuenta-num-label">días</span></div>
+                <div class="cuenta-num"><span class="cuenta-num-val" id="cr-horas">00</span><span class="cuenta-num-label">horas</span></div>
+                <div class="cuenta-num"><span class="cuenta-num-val" id="cr-mins">00</span><span class="cuenta-num-label">min</span></div>
+                <div class="cuenta-num"><span class="cuenta-num-val" id="cr-segs">00</span><span class="cuenta-num-label">seg</span></div>
             </div>
+            <div class="cuenta-regresiva-msg">Usa este tiempo para leer el material informativo</div>
+        </div>
+
+        <!-- Documento adjunto -->
+        <div class="documentos-lista" id="documentos-lista"></div>
+        <div class="documento-no-disponible" id="doc-no-disponible">
+            No hay documentos adjuntos para este proceso.
         </div>
     </div>
 
+    <!-- COLUMNA DERECHA -->
     <div class="col-der">
 
+        <!-- Panel inscripción (votación no abierta) -->
+        <div class="panel visible" id="panel-inscripcion">
+            <div class="inscripcion-panel">
+                <div class="inscripcion-icono">🗓️</div>
+                <div class="inscripcion-titulo">Período de inscripción</div>
+                <div class="inscripcion-txt">La votación aún no ha comenzado. Aprovecha este tiempo para revisar el material informativo en el panel izquierdo.</div>
+            </div>
+        </div>
+
         <!-- PASO 1: CÉDULA -->
-        <div class="panel visible" id="panel-cedula">
+        <div class="panel" id="panel-cedula">
             <div class="panel-titulo">Paso 1 — Ingresa tu cédula</div>
             <div class="campo">
                 <label>Número de cédula</label>
@@ -162,28 +230,32 @@
 
         <!-- PASO 3: VOTO -->
         <div class="panel" id="panel-voto">
-            <div class="panel-titulo">Paso 3 — Selecciona tu candidato</div>
+            <div class="panel-titulo">Paso 3 — Emite tu voto</div>
             <div class="bienvenida" id="bienvenida"></div>
+            <div class="campo"><label>Selecciona tu opción</label></div>
             <div class="candidatos-lista" id="candidatos-lista"></div>
             <div class="mensaje" id="msg-voto"></div>
             <button class="btn btn-primario" id="btn-votar" onclick="registrarVoto()">Registrar voto en blockchain</button>
+            <button class="btn btn-abstencion" id="btn-abstencion" onclick="registrarAbstencion()">Abstenerme</button>
             <div class="info-blockchain">
-                <div class="info-fila">
-                    <span class="info-clave">Contrato</span>
-                    <span class="info-valor" id="info-contrato">—</span>
-                </div>
-                <div class="info-fila">
-                    <span class="info-clave">Red</span>
-                    <span class="info-valor">Hardhat Local</span>
-                </div>
+                <div class="info-fila"><span class="info-clave">Contrato</span><span class="info-valor" id="info-contrato">—</span></div>
+                <div class="info-fila"><span class="info-clave">Red</span><span class="info-valor">Hardhat Local</span></div>
             </div>
         </div>
 
-        <!-- RESULTADOS -->
-        <div class="panel visible" id="panel-resultados">
-            <div class="panel-titulo">Resultados en tiempo real</div>
-            <div id="resultados-lista"><p style="font-size:0.8rem;color:var(--gris)">Cargando...</p></div>
-            <button class="btn btn-secundario" onclick="cargarResultados()">Actualizar</button>
+        <!-- CONFIRMACIÓN + RESULTADOS POST-VOTO -->
+        <div class="panel" id="panel-confirmacion">
+            <div class="voto-exitoso">
+                <div class="voto-exitoso-icono">🗳️</div>
+                <div class="voto-exitoso-titulo" id="confirmacion-titulo">Voto registrado</div>
+                <div class="voto-exitoso-sub" id="confirmacion-sub">Tu voto ha sido registrado en blockchain.</div>
+            </div>
+            <div class="campo"><label>Resultados parciales</label></div>
+            <div id="resultados-lista"></div>
+            <div class="participacion-info" id="participacion-info"></div>
+            <div class="info-blockchain">
+                <div class="info-fila"><span class="info-clave">TX</span><span class="info-valor" id="footer-hash">—</span></div>
+            </div>
         </div>
 
     </div>
@@ -191,173 +263,254 @@
 
 <footer>
     <div class="footer-txt">VotoChain — Sistema de votación descentralizado · Ecuador</div>
-    <div class="footer-hash" id="footer-hash">Conectado al servidor</div>
+    <div class="footer-hash" id="footer-txt">Conectado al servidor</div>
 </footer>
 
 <script>
-    const API = "http://192.168.100.5:3000";
-    let cedulaVerificada = null;
-    let candidatoSeleccionado = null;
+const API = "http://192.168.100.5:3000";
+let cedulaVerificada = null;
+let candidatoSeleccionado = null;
+let infoProceso = null;
+let cuentaInterval = null;
 
-    async function cargarOpciones() {
-        try {
-            const res = await fetch(API + "/api/opciones");
-            const data = await res.json();
-            if (!data.exito) return;
-            const lista = document.getElementById("candidatos-lista");
+// INICIALIZAR
+async function inicializar() {
+    await cargarInfoProceso();
+    await cargarDocumento();
+    verificarEstadoVotacion();
+}
+
+async function cargarInfoProceso() {
+    try {
+        const res = await fetch(API + "/api/info-proceso");
+        const data = await res.json();
+        if (!data.exito) return;
+        infoProceso = data;
+
+        document.getElementById("proceso-titulo").textContent = data.titulo;
+        document.getElementById("proceso-tipo").textContent = data.tipo.replace(/_/g, " ").toUpperCase();
+        document.getElementById("proceso-descripcion").textContent = data.descripcion || "";
+
+        const inicio = new Date(data.inicioVotacion * 1000);
+        const fin = new Date(data.finVotacion * 1000);
+        document.getElementById("fecha-inicio").textContent = inicio.toLocaleString("es-EC", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
+        document.getElementById("fecha-fin").textContent = fin.toLocaleString("es-EC", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
+    } catch(e) {}
+}
+
+async function cargarDocumento() {
+    try {
+        const res = await fetch(API + "/api/documentos-proceso");
+        const data = await res.json();
+        if (data.exito && data.documentos.length > 0) {
+            const lista = document.getElementById("documentos-lista");
             lista.innerHTML = "";
-            data.opciones.forEach(nombre => {
+            data.documentos.forEach(function(nombre) {
+                const url = API + "/api/documento-proceso/" + encodeURIComponent(nombre);
                 const div = document.createElement("div");
-                div.className = "candidato-opcion";
-                div.innerHTML = '<span class="candidato-nombre">' + nombre + '</span><div class="candidato-check"></div>';
-                div.onclick = () => {
-                    document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
-                    div.classList.add("seleccionado");
-                    candidatoSeleccionado = nombre;
-                };
+                div.className = "documento-item";
+                div.innerHTML = '<div class="documento-info"><div class="documento-icono">📄</div><div><div class="documento-nombre">' + nombre + '</div><div class="documento-tipo">Material informativo · PDF</div></div></div><div class="documento-btns"><a class="btn-doc btn-doc-ver" href="' + url + '" target="_blank">↗ Ver</a><a class="btn-doc btn-doc-dl" href="' + url + '" download="' + nombre + '">↓ Descargar</a></div>';
                 lista.appendChild(div);
             });
-        } catch(e) {
-            console.error("Error cargando opciones:", e);
+            return;
         }
-    }
+    } catch(e) {}
+    document.getElementById("doc-no-disponible").classList.add("visible");
+}
 
-    async function verificarCedula() {
-        const cedula = document.getElementById("cedula-input").value.trim();
-        const msg = document.getElementById("msg-cedula");
-        const btn = document.getElementById("btn-cedula");
-        btn.disabled = true;
-        btn.textContent = "Verificando...";
-        mostrarMensaje(msg, "info", "Consultando los tres padrones...");
-        try {
-            const res = await fetch(API + "/api/verificar-cedula", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula })
-            });
-            const data = await res.json();
-            if (data.valido) {
-                cedulaVerificada = cedula;
-                document.getElementById("panel-cedula").classList.remove("visible");
-                document.getElementById("panel-pin").classList.add("visible");
-                document.getElementById("pin-input").focus();
-            } else {
-                mostrarMensaje(msg, "error", data.mensaje);
-            }
-        } catch (e) {
-            mostrarMensaje(msg, "error", "No se pudo conectar al servidor.");
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "Continuar";
+function verificarEstadoVotacion() {
+    if (!infoProceso) return;
+    const ahora = Math.floor(Date.now() / 1000);
+    const inicio = infoProceso.inicioVotacion;
+    const fin = infoProceso.finVotacion;
+
+    if (infoProceso.cerrado || ahora > fin) {
+        // Votación cerrada
+        mostrarPanel("inscripcion");
+        document.getElementById("panel-inscripcion").querySelector(".inscripcion-titulo").textContent = "Votación cerrada";
+        document.getElementById("panel-inscripcion").querySelector(".inscripcion-txt").textContent = "El período de votación ha concluido.";
+    } else if (ahora < inicio) {
+        // Período de inscripción — mostrar cuenta regresiva
+        mostrarPanel("inscripcion");
+        document.getElementById("cuenta-regresiva").style.display = "block";
+        iniciarCuentaRegresiva(inicio);
+    } else {
+        // Votación abierta
+        document.getElementById("cuenta-regresiva").style.display = "none";
+        mostrarPanel("cedula");
+    }
+}
+
+function iniciarCuentaRegresiva(timestamp) {
+    if (cuentaInterval) clearInterval(cuentaInterval);
+    function actualizar() {
+        const ahora = Math.floor(Date.now() / 1000);
+        const diff = timestamp - ahora;
+        if (diff <= 0) {
+            clearInterval(cuentaInterval);
+            verificarEstadoVotacion();
+            return;
         }
+        const dias = Math.floor(diff / 86400);
+        const horas = Math.floor((diff % 86400) / 3600);
+        const mins = Math.floor((diff % 3600) / 60);
+        const segs = diff % 60;
+        document.getElementById("cr-dias").textContent = String(dias).padStart(2, "0");
+        document.getElementById("cr-horas").textContent = String(horas).padStart(2, "0");
+        document.getElementById("cr-mins").textContent = String(mins).padStart(2, "0");
+        document.getElementById("cr-segs").textContent = String(segs).padStart(2, "0");
     }
+    actualizar();
+    cuentaInterval = setInterval(actualizar, 1000);
+}
 
-    async function verificarPin() {
-        const pin = document.getElementById("pin-input").value.trim();
-        const msg = document.getElementById("msg-pin");
-        const btn = document.getElementById("btn-pin");
-        btn.disabled = true;
-        btn.textContent = "Verificando...";
-        mostrarMensaje(msg, "info", "Verificando PIN...");
-        try {
-            const res = await fetch(API + "/api/verificar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula: cedulaVerificada, pin })
-            });
-            const data = await res.json();
-            if (data.valido) {
-                document.getElementById("bienvenida").textContent = "Hola, " + data.nombre + ". Selecciona tu candidato.";
-                document.getElementById("panel-pin").classList.remove("visible");
-                document.getElementById("panel-voto").classList.add("visible");
-            } else {
-                mostrarMensaje(msg, "error", data.mensaje);
-            }
-        } catch (e) {
-            mostrarMensaje(msg, "error", "No se pudo conectar al servidor.");
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "Continuar";
+function mostrarPanel(id) {
+    ["inscripcion","cedula","pin","voto","confirmacion"].forEach(function(p) {
+        document.getElementById("panel-" + p).classList.remove("visible");
+    });
+    document.getElementById("panel-" + id).classList.add("visible");
+}
+
+async function cargarOpciones() {
+    try {
+        const res = await fetch(API + "/api/opciones");
+        const data = await res.json();
+        if (!data.exito) return;
+        const lista = document.getElementById("candidatos-lista");
+        lista.innerHTML = "";
+        data.opciones.forEach(function(nombre) {
+            const div = document.createElement("div");
+            div.className = "candidato-opcion";
+            div.innerHTML = '<span class="candidato-nombre">' + nombre + '</span><div class="candidato-check"></div>';
+            div.onclick = function() {
+                document.querySelectorAll(".candidato-opcion").forEach(function(el) { el.classList.remove("seleccionado"); });
+                div.classList.add("seleccionado");
+                candidatoSeleccionado = nombre;
+            };
+            lista.appendChild(div);
+        });
+    } catch(e) {}
+}
+
+async function verificarCedula() {
+    const cedula = document.getElementById("cedula-input").value.trim();
+    const msg = document.getElementById("msg-cedula");
+    const btn = document.getElementById("btn-cedula");
+    btn.disabled = true; btn.textContent = "Verificando...";
+    mostrarMensaje(msg, "info", "Consultando los tres padrones...");
+    try {
+        const res = await fetch(API + "/api/verificar-cedula", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cedula }) });
+        const data = await res.json();
+        if (data.valido) {
+            cedulaVerificada = cedula;
+            mostrarPanel("pin");
+            document.getElementById("pin-input").focus();
+        } else {
+            mostrarMensaje(msg, "error", data.mensaje);
         }
-    }
+    } catch(e) { mostrarMensaje(msg, "error", "No se pudo conectar al servidor."); }
+    finally { btn.disabled = false; btn.textContent = "Continuar"; }
+}
 
-    async function registrarVoto() {
-        const msg = document.getElementById("msg-voto");
-        const btn = document.getElementById("btn-votar");
-        if (!candidatoSeleccionado) { mostrarMensaje(msg, "error", "Selecciona un candidato."); return; }
-        btn.disabled = true;
-        btn.textContent = "Enviando a blockchain...";
-        mostrarMensaje(msg, "info", "Registrando voto en la cadena...");
-        try {
-            const res = await fetch(API + "/api/votar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cedula: cedulaVerificada, candidato: candidatoSeleccionado })
-            });
-            const data = await res.json();
-            if (data.exito) {
-                mostrarMensaje(msg, "exito", "Voto registrado en blockchain.");
-                document.getElementById("footer-hash").textContent = "TX: " + data.tx.slice(0,18) + "...";
-                cargarResultados();
-                setTimeout(() => {
-                    document.getElementById("panel-voto").classList.remove("visible");
-                    document.getElementById("panel-cedula").classList.add("visible");
-                    document.getElementById("cedula-input").value = "";
-                    document.getElementById("pin-input").value = "";
-                    document.querySelectorAll(".candidato-opcion").forEach(el => el.classList.remove("seleccionado"));
-                    candidatoSeleccionado = null;
-                    cedulaVerificada = null;
-                    btn.disabled = false;
-                    btn.textContent = "Registrar voto en blockchain";
-                }, 3000);
-            } else {
-                mostrarMensaje(msg, "error", data.mensaje);
-                btn.disabled = false;
-                btn.textContent = "Registrar voto en blockchain";
-            }
-        } catch (e) {
-            mostrarMensaje(msg, "error", "Error de conexión con el servidor.");
-            btn.disabled = false;
-            btn.textContent = "Registrar voto en blockchain";
+async function verificarPin() {
+    const pin = document.getElementById("pin-input").value.trim();
+    const msg = document.getElementById("msg-pin");
+    const btn = document.getElementById("btn-pin");
+    btn.disabled = true; btn.textContent = "Verificando...";
+    mostrarMensaje(msg, "info", "Verificando PIN...");
+    try {
+        const res = await fetch(API + "/api/verificar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cedula: cedulaVerificada, pin }) });
+        const data = await res.json();
+        if (data.valido) {
+            document.getElementById("bienvenida").textContent = "Hola, " + data.nombre + ". Selecciona tu opción.";
+            mostrarPanel("voto");
+            cargarOpciones();
+        } else {
+            mostrarMensaje(msg, "error", data.mensaje);
         }
-    }
+    } catch(e) { mostrarMensaje(msg, "error", "No se pudo conectar al servidor."); }
+    finally { btn.disabled = false; btn.textContent = "Continuar"; }
+}
 
-    async function cargarResultados() {
-        const lista = document.getElementById("resultados-lista");
-        try {
-            const res = await fetch(API + "/api/resultados");
-            const data = await res.json();
-            if (!data.exito) return;
-            const total = data.resultados.reduce((a, b) => a + b.votos, 0);
-            const max = Math.max(...data.resultados.map(r => r.votos));
+async function registrarVoto() {
+    const msg = document.getElementById("msg-voto");
+    const btn = document.getElementById("btn-votar");
+    if (!candidatoSeleccionado) { mostrarMensaje(msg, "error", "Selecciona una opción."); return; }
+    btn.disabled = true; btn.textContent = "Enviando a blockchain...";
+    mostrarMensaje(msg, "info", "Registrando voto...");
+    try {
+        const res = await fetch(API + "/api/votar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cedula: cedulaVerificada, candidato: candidatoSeleccionado }) });
+        const data = await res.json();
+        if (data.exito) {
+            document.getElementById("footer-hash").textContent = data.tx ? data.tx.slice(0,20) + "..." : "—";
+            document.getElementById("confirmacion-titulo").textContent = "Voto registrado";
+            document.getElementById("confirmacion-sub").textContent = 'Votaste por "' + candidatoSeleccionado + '". Inmutable en blockchain.';
+            mostrarResultadosPostVoto();
+        } else {
+            mostrarMensaje(msg, "error", data.mensaje);
+            btn.disabled = false; btn.textContent = "Registrar voto en blockchain";
+        }
+    } catch(e) { mostrarMensaje(msg, "error", "Error de conexión."); btn.disabled = false; btn.textContent = "Registrar voto en blockchain"; }
+}
+
+async function registrarAbstencion() {
+    const btn = document.getElementById("btn-abstencion");
+    const msg = document.getElementById("msg-voto");
+    if (!confirm("¿Confirmas tu abstención? Se registrará en blockchain.")) return;
+    btn.disabled = true; btn.textContent = "Registrando...";
+    try {
+        const res = await fetch(API + "/api/abstenerse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cedula: cedulaVerificada }) });
+        const data = await res.json();
+        if (data.exito) {
+            document.getElementById("confirmacion-titulo").textContent = "Abstención registrada";
+            document.getElementById("confirmacion-sub").textContent = "Tu abstención ha sido registrada en blockchain.";
+            mostrarResultadosPostVoto();
+        } else {
+            mostrarMensaje(msg, "error", data.mensaje);
+            btn.disabled = false; btn.textContent = "Abstenerme";
+        }
+    } catch(e) { mostrarMensaje(msg, "error", "Error de conexión."); btn.disabled = false; btn.textContent = "Abstenerme"; }
+}
+
+async function mostrarResultadosPostVoto() {
+    mostrarPanel("confirmacion");
+    try {
+        const [resR, resI] = await Promise.all([
+            fetch(API + "/api/resultados"),
+            fetch(API + "/api/info-proceso")
+        ]);
+        const dataR = await resR.json();
+        const dataI = await resI.json();
+        if (dataR.exito) {
+            const total = dataR.resultados.reduce(function(a,b){return a+b.votos;},0);
+            const max = Math.max.apply(null, dataR.resultados.map(function(r){return r.votos;}));
+            const lista = document.getElementById("resultados-lista");
             lista.innerHTML = "";
-            data.resultados.forEach(function(r) {
-                const pct = total > 0 ? (r.votos / total * 100) : 0;
+            dataR.resultados.forEach(function(r) {
+                const pct = total > 0 ? (r.votos/total*100) : 0;
                 const esGanador = r.votos === max && max > 0;
                 const div = document.createElement("div");
                 div.className = "resultado-item" + (esGanador ? " ganador" : "");
-                div.innerHTML = '<div class="resultado-header"><span class="resultado-nombre">' + r.candidato + (esGanador ? ' <span class="ganador-badge">— Líder</span>' : '') + '</span><span class="resultado-votos">' + r.votos + ' voto' + (r.votos !== 1 ? 's' : '') + ' · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno" data-p="' + pct + '"></div></div>';
+                div.innerHTML = '<div class="resultado-header"><span class="resultado-nombre">' + r.candidato + (esGanador ? '<span class="ganador-badge">— Líder</span>' : '') + '</span><span class="resultado-votos">' + r.votos + ' voto' + (r.votos!==1?'s':'') + ' · ' + pct.toFixed(1) + '%</span></div><div class="barra-fondo"><div class="barra-relleno" data-p="' + pct + '"></div></div>';
                 lista.appendChild(div);
             });
-            setTimeout(function() {
-                document.querySelectorAll(".barra-relleno").forEach(function(b) { b.style.width = b.dataset.p + "%"; });
-            }, 100);
-        } catch(e) {
-            lista.innerHTML = "<p style='font-size:0.8rem;color:var(--gris)'>Cargando resultados...</p>";
+            setTimeout(function(){ document.querySelectorAll(".barra-relleno").forEach(function(b){b.style.width=b.dataset.p+"%";}); }, 100);
         }
-    }
+        if (dataI.exito) {
+            document.getElementById("participacion-info").innerHTML = '<span>Participación: ' + (dataI.totalParticipantes||0) + ' votos</span><span>Abstenciones: ' + (dataI.totalAbstenciones||0) + '</span>';
+        }
+    } catch(e) {}
+}
 
-    function mostrarMensaje(el, tipo, texto) {
-        el.className = "mensaje " + tipo + " visible";
-        el.textContent = texto;
-    }
+function mostrarMensaje(el, tipo, texto) {
+    el.className = "mensaje " + tipo + " visible";
+    el.textContent = texto;
+}
 
-    document.getElementById("cedula-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarCedula(); });
-    document.getElementById("pin-input").addEventListener("keydown", function(e) { if (e.key === "Enter") verificarPin(); });
+document.getElementById("cedula-input").addEventListener("keydown", function(e){ if(e.key==="Enter") verificarCedula(); });
+document.getElementById("pin-input").addEventListener("keydown", function(e){ if(e.key==="Enter") verificarPin(); });
 
-    cargarOpciones();
-    cargarResultados();
-    setInterval(cargarResultados, 10000);
+inicializar();
 </script>
 </body>
 </html>

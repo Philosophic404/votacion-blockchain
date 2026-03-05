@@ -13,6 +13,10 @@ contract Votacion {
     mapping(string => bool) public padronPartido;
     mapping(string => bool) public padronCNE;
     mapping(string => bool) public registroCivil;
+    mapping(string => bool) public participo;
+    uint public totalParticipantes;
+    mapping(string => bool) public seAbstuvo;
+    uint public totalAbstenciones;
 
     uint public inicioInscripcion;
     uint public finInscripcion;
@@ -74,7 +78,21 @@ contract Votacion {
         require(padronPartido[cedula], "No es militante del partido");
         require(!yaVoto[cedula], "Ya votaste");
         yaVoto[cedula] = true;
+        participo[cedula] = true;
+        totalParticipantes += 1;
         conteo[candidato] += 1;
+    }
+
+    function abstenerse(string memory cedula) public soloEnVotacion {
+        require(registroCivil[cedula], "Cedula no valida en Registro Civil");
+        require(padronCNE[cedula], "Sin derecho al voto segun CNE");
+        require(padronPartido[cedula], "No es militante del partido");
+        require(!yaVoto[cedula], "Ya votaste");
+        yaVoto[cedula] = true;
+        participo[cedula] = true;
+        seAbstuvo[cedula] = true;
+        totalParticipantes += 1;
+        totalAbstenciones += 1;
     }
 
     function cerrarVotacion() public soloCNE {
@@ -86,8 +104,8 @@ contract Votacion {
     }
 
     function obtenerInfo() public view returns (
-        string memory, string memory, bool, uint, uint
+        string memory, string memory, bool, uint, uint, uint, uint
     ) {
-        return (tituloProceso, tipoProceso, cerrado, inicioVotacion, finVotacion);
+        return (tituloProceso, tipoProceso, cerrado, inicioVotacion, finVotacion, totalParticipantes, totalAbstenciones);
     }
 }

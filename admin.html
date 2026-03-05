@@ -243,7 +243,7 @@
                     <div class="form-grupo">
                         <label class="form-label">Documento informativo (PDF)</label>
                         <div class="upload-zona" onclick="document.getElementById('proc-pdf').click()">
-                            <input type="file" id="proc-pdf" accept=".pdf" onchange="mostrarPDF(this)">
+                            <input type="file" id="proc-pdf" accept=".pdf" multiple onchange="mostrarPDF(this)">
                             <div class="upload-icono">📄</div>
                             <div class="upload-txt"><strong>Haz clic para subir</strong> el texto de la ley o propuesta</div>
                             <div id="proc-pdf-nombre" style="font-size:0.75rem;color:var(--verde);margin-top:0.5rem"></div>
@@ -618,7 +618,7 @@
 
     function agregarOpcion() { opciones.push(""); renderOpciones(); }
     function quitarOpcion(i) { opciones.splice(i, 1); renderOpciones(); }
-    function mostrarPDF(input) { if (input.files[0]) document.getElementById("proc-pdf-nombre").textContent = "✓ " + input.files[0].name; }
+    function mostrarPDF(input) { if (input.files.length > 0) document.getElementById("proc-pdf-nombre").textContent = "✓ " + Array.from(input.files).map(f => f.name).join(", "); }
 
     async function guardarProceso() {
         const titulo = document.getElementById("proc-titulo").value.trim();
@@ -642,24 +642,33 @@
         msg.textContent = "Creando proceso en blockchain. Esto puede tardar unos segundos...";
 
         try {
+            const datos = {
+                titulo, tipo,
+                descripcion: document.getElementById("proc-descripcion") ? document.getElementById("proc-descripcion").value.trim() : "",
+                opciones: opciones.filter(function(o) { return o.trim(); }),
+                inicioInscripcion: document.getElementById("proc-inicio-inscripcion").value,
+                finInscripcion: document.getElementById("proc-fin-inscripcion").value,
+                inicioVotacion: inicioVotacion,
+                finVotacion: finVotacion
+            };
+            const formData = new FormData();
+            formData.append("datos", JSON.stringify(datos));
+            const pdfInput = document.getElementById("proc-pdf");
+            if (pdfInput.files.length > 0) {
+                Array.from(pdfInput.files).forEach(function(file) {
+                    formData.append("pdfs", file);
+                });
+            }
             const res = await fetch(API + "/api/crear-proceso", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    titulo, tipo,
-                    opciones: opciones.filter(o => o.trim()),
-                    inicioInscripcion: inicioInscripcion || new Date().toISOString(),
-                    finInscripcion: finInscripcion || new Date(Date.now() + 3600000).toISOString(),
-                    inicioVotacion,
-                    finVotacion
-                })
+                body: formData
             });
             const data = await res.json();
             if (data.exito) {
                 msg.className = "mensaje exito visible";
                 msg.textContent = "✓ " + data.mensaje;
                 limpiarFormulario();
-                setTimeout(() => actualizarDashboard(), 2000);
+                setTimeout(actualizarDashboard, 2000);
             } else {
                 msg.className = "mensaje error visible";
                 msg.textContent = "⚠ " + data.mensaje;

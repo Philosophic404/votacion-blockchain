@@ -4,6 +4,8 @@ const cors = require("cors");
 const XLSX = require("xlsx");
 const { ethers } = require("ethers");
 const fs = require("fs");
+const multer = require("multer");
+const upload = multer({ dest: "./" });
 
 const app = express();
 app.use(cors());
@@ -17,11 +19,14 @@ const PORT = process.env.PORT || 3000;
 
 const ABI = [
     "function votar(string memory cedula, string memory candidato) public",
+    "function abstenerse(string memory cedula) public",
     "function obtenerVotos(string memory candidato) public view returns (uint)",
     "function cerrarVotacion() public",
-    "function obtenerInfo() public view returns (string memory, string memory, bool, uint, uint)",
+    "function obtenerInfo() public view returns (string memory, string memory, bool, uint, uint, uint, uint)",
     "function registrarCiudadano(string memory cedula) public",
     "function agregarMilitante(string memory cedula) public",
+    "function totalParticipantes() public view returns (uint)",
+    "function totalAbstenciones() public view returns (uint)",
 ];
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -89,6 +94,17 @@ app.post("/api/votar", async (req, res) => {
     }
 });
 
+app.post("/api/abstenerse", async (req, res) => {
+    const { cedula } = req.body;
+    try {
+        const tx = await contrato.abstenerse(cedula);
+        await tx.wait();
+        res.json({ exito: true, mensaje: "Abstención registrada en blockchain." });
+    } catch (error) {
+        res.json({ exito: false, mensaje: error.reason || error.message });
+    }
+});
+
 app.get("/api/resultados", async (req, res) => {
     try {
         const artifact = JSON.parse(fs.readFileSync("./artifacts/contracts/Votacion.sol/Votacion.json", "utf8"));
@@ -113,18 +129,57 @@ app.get("/api/resultados", async (req, res) => {
 
 app.get("/api/info-proceso", async (req, res) => {
     try {
-        const [titulo, tipo, cerrado, inicioVotacion, finVotacion] = await contrato.obtenerInfo();
+        const [titulo, tipo, cerrado, inicioVotacion, finVotacion, totalParticipantes, totalAbstenciones] = await contrato.obtenerInfo();
+        let descripcion = "";
+        if (fs.existsSync("./proceso-config.json")) {
+            const config = JSON.parse(fs.readFileSync("./proceso-config.json", "utf8"));
+            descripcion = config.descripcion || "";
+        }
         res.json({
-            exito: true,
-            titulo,
-            tipo,
-            cerrado,
+            exito: true, titulo, tipo, cerrado, descripcion,
             inicioVotacion: Number(inicioVotacion),
-            finVotacion: Number(finVotacion)
+            finVotacion: Number(finVotacion),
+            totalParticipantes: Number(totalParticipantes),
+            totalAbstenciones: Number(totalAbstenciones)
         });
     } catch (error) {
         res.json({ exito: false, mensaje: error.message });
     }
+});
+
+app.get("/api/documento-proceso", (req, res) => {
+    const rutaPDF = "./documento-proceso.pdf";
+    if (fs.existsSync(rutaPDF)) {
+        res.setHeader("Content-Type", "application/pdf");
+        res.sendFile(require("path").resolve(rutaPDF));
+    } else {
+        res.status(404).json({ exito: false, mensaje: "No hay documento adjunto." });
+    }
+});
+
+const uploadMultiple = multer({ dest: "./documentos-proceso/" });
+app.post("/api/subir-documento", uploadMultiple.array("pdfs", 10), (req, res) => {
+    if (!req.files || req.files.length === 0) return res.json({ exito: false, mensaje: "No se recibieron archivos." });
+    if (!fs.existsSync("./documentos-proceso")) fs.mkdirSync("./documentos-proceso");
+    const guardados = [];
+    req.files.forEach(function(file) {
+        const destino = "./documentos-proceso/" + file.originalname;
+        fs.renameSync(file.path, destino);
+        guardados.push(file.originalname);
+    });
+    res.json({ exito: true, mensaje: guardados.length + " documento(s) subido(s).", archivos: guardados });
+});
+app.get("/api/documentos-proceso", (req, res) => {
+    const carpeta = "./documentos-proceso";
+    if (!fs.existsSync(carpeta)) return res.json({ exito: true, documentos: [] });
+    const archivos = fs.readdirSync(carpeta).filter(f => f.endsWith(".pdf"));
+    res.json({ exito: true, documentos: archivos });
+});
+app.get("/api/documento-proceso/:nombre", (req, res) => {
+    const ruta = "./documentos-proceso/" + req.params.nombre;
+    if (!fs.existsSync(ruta)) return res.status(404).json({ exito: false, mensaje: "Archivo no encontrado." });
+    res.setHeader("Content-Type", "application/pdf");
+    res.sendFile(require("path").resolve(ruta));
 });
 
 app.get("/api/opciones", async (req, res) => {
@@ -160,17 +215,32 @@ app.post("/api/cerrar-votacion", async (req, res) => {
     }
 });
 
-// FIX 2: Eliminado bloque duplicado fuera del try. Se unificó en un solo flujo correcto.
-app.post("/api/crear-proceso", async (req, res) => {
-    const { titulo, tipo, opciones, inicioInscripcion, finInscripcion, inicioVotacion, finVotacion } = req.body;
+if (!fs.existsSync("./documentos-proceso")) fs.mkdirSync("./documentos-proceso");
+const uploadProceso = multer({ dest: "./documentos-proceso/" });
+app.post("/api/crear-proceso", uploadProceso.array("pdfs", 10), async (req, res) => {
+    const { titulo, tipo, opciones, descripcion, inicioInscripcion, finInscripcion, inicioVotacion, finVotacion } = JSON.parse(req.body.datos);
     if (!titulo || !opciones || opciones.length < 2) {
         return res.json({ exito: false, mensaje: "Datos incompletos." });
     }
     try {
+        // Limpiar documentos anteriores y guardar nuevos
+        const carpetaDocs = "./documentos-proceso";
+        if (fs.existsSync(carpetaDocs)) {
+            fs.readdirSync(carpetaDocs).forEach(function(archivo) {
+                fs.unlinkSync(carpetaDocs + "/" + archivo);
+            });
+        } else {
+            fs.mkdirSync(carpetaDocs);
+        }
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(function(file) {
+                fs.renameSync(file.path, carpetaDocs + "./documentos-proceso/" + file.originalname);
+            });
+        }
         const { execSync } = require("child_process");
         const ahora = Math.floor(Date.now() / 1000);
         const config = {
-            titulo, tipo, opciones,
+            titulo, tipo, descripcion: descripcion || "", opciones,
             inicioInscripcion: inicioInscripcion ? Math.floor(new Date(inicioInscripcion).getTime() / 1000) : ahora - 10,
             finInscripcion: finInscripcion ? Math.floor(new Date(finInscripcion).getTime() / 1000) : ahora + 3600,
             inicioVotacion: Math.floor(new Date(inicioVotacion).getTime() / 1000),
