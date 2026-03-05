@@ -13,9 +13,12 @@ app.use(express.json());
 app.use(express.static("."));
 
 const DIRECCION_CONTRATO = process.env.DIRECCION_CONTRATO || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x9b29156888bba91a8df2df257ff6411500405155b0088801ca112ec87cca8852";
 const RPC_URL = process.env.RPC_URL || "http://127.0.0.1:8545";
 const PORT = process.env.PORT || 3000;
+
+console.log(process.env.PRIVATE_KEY);
+/* console.log(process.env.PRIVATE_KEY.length); */
 
 const ABI = [
     "function votar(string memory cedula, string memory candidato) public",
@@ -116,7 +119,7 @@ app.get("/api/resultados", async (req, res) => {
                 const opcion = await contratoCompleto.candidatos(i);
                 opciones.push(opcion);
                 i++;
-            } catch(e) { break; }
+            } catch (e) { break; }
         }
         const resultados = await Promise.all(
             opciones.map(async c => ({ candidato: c, votos: Number(await contrato.obtenerVotos(c)) }))
@@ -162,7 +165,7 @@ app.post("/api/subir-documento", uploadMultiple.array("pdfs", 10), (req, res) =>
     if (!req.files || req.files.length === 0) return res.json({ exito: false, mensaje: "No se recibieron archivos." });
     if (!fs.existsSync("./documentos-proceso")) fs.mkdirSync("./documentos-proceso");
     const guardados = [];
-    req.files.forEach(function(file) {
+    req.files.forEach(function (file) {
         const destino = "./documentos-proceso/" + file.originalname;
         fs.renameSync(file.path, destino);
         guardados.push(file.originalname);
@@ -195,7 +198,7 @@ app.get("/api/opciones", async (req, res) => {
                 const opcion = await contratoCompleto.candidatos(i);
                 opciones.push(opcion);
                 i++;
-            } catch(e) {
+            } catch (e) {
                 break;
             }
         }
@@ -224,17 +227,21 @@ app.post("/api/crear-proceso", uploadProceso.array("pdfs", 10), async (req, res)
     }
     try {
         // Limpiar documentos anteriores y guardar nuevos
+        const path = require("path");
         const carpetaDocs = "./documentos-proceso";
-        if (fs.existsSync(carpetaDocs)) {
-            fs.readdirSync(carpetaDocs).forEach(function(archivo) {
-                fs.unlinkSync(carpetaDocs + "/" + archivo);
-            });
-        } else {
+        const guardados = [];
+
+        if (!fs.existsSync(carpetaDocs)) {
             fs.mkdirSync(carpetaDocs);
         }
+
         if (req.files && req.files.length > 0) {
-            req.files.forEach(function(file) {
-                fs.renameSync(file.path, carpetaDocs + "./documentos-proceso/" + file.originalname);
+            req.files.forEach((file) => {
+                console.log("Archivo temporal:", file.path);
+                const destino = path.join(carpetaDocs, file.originalname);
+                console.log("Destino:", destino);
+                fs.renameSync(file.path, destino);
+                guardados.push(file.originalname);
             });
         }
         const { execSync } = require("child_process");

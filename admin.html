@@ -420,7 +420,7 @@
 </div>
 
 <script>
-    const API = "http://192.168.100.5:3000";
+    const API = "http://localhost:3000";
     const CANDIDATOS = ["Jaime Roldós", "Rafael Correa", "Noboa"];
     const PASSWORD_ADMIN = "admin123";
     let infoProceso = null;
@@ -621,66 +621,150 @@
     function mostrarPDF(input) { if (input.files.length > 0) document.getElementById("proc-pdf-nombre").textContent = "✓ " + Array.from(input.files).map(f => f.name).join(", "); }
 
     async function guardarProceso() {
-        const titulo = document.getElementById("proc-titulo").value.trim();
-        const tipo = document.getElementById("proc-tipo").value;
-        const msg = document.getElementById("msg-proceso");
-        const btn = document.querySelector("#page-nuevo-proceso .btn-primario");
+    console.log("1️⃣ Iniciando guardarProceso");
 
-        if (!titulo) { msg.className = "mensaje error visible"; msg.textContent = "El título es obligatorio."; return; }
-        if (opciones.filter(o => o.trim()).length < 2) { msg.className = "mensaje error visible"; msg.textContent = "Agrega al menos 2 opciones."; return; }
+    const titulo = document.getElementById("proc-titulo").value.trim();
+    const tipo = document.getElementById("proc-tipo").value;
+    const msg = document.getElementById("msg-proceso");
+    const btn = document.querySelector("#page-nuevo-proceso .btn-primario");
 
-        const inicioInscripcion = document.getElementById("proc-inicio-inscripcion").value;
-        const finInscripcion = document.getElementById("proc-fin-inscripcion").value;
-        const inicioVotacion = document.getElementById("proc-inicio-votacion").value;
-        const finVotacion = document.getElementById("proc-fin-votacion").value;
+    console.log("2️⃣ Datos básicos:", { titulo, tipo });
 
-        if (!inicioVotacion || !finVotacion) { msg.className = "mensaje error visible"; msg.textContent = "Las fechas de votación son obligatorias."; return; }
-
-        btn.disabled = true;
-        btn.textContent = "Desplegando contrato...";
-        msg.className = "mensaje info visible";
-        msg.textContent = "Creando proceso en blockchain. Esto puede tardar unos segundos...";
-
-        try {
-            const datos = {
-                titulo, tipo,
-                descripcion: document.getElementById("proc-descripcion") ? document.getElementById("proc-descripcion").value.trim() : "",
-                opciones: opciones.filter(function(o) { return o.trim(); }),
-                inicioInscripcion: document.getElementById("proc-inicio-inscripcion").value,
-                finInscripcion: document.getElementById("proc-fin-inscripcion").value,
-                inicioVotacion: inicioVotacion,
-                finVotacion: finVotacion
-            };
-            const formData = new FormData();
-            formData.append("datos", JSON.stringify(datos));
-            const pdfInput = document.getElementById("proc-pdf");
-            if (pdfInput.files.length > 0) {
-                Array.from(pdfInput.files).forEach(function(file) {
-                    formData.append("pdfs", file);
-                });
-            }
-            const res = await fetch(API + "/api/crear-proceso", {
-                method: "POST",
-                body: formData
-            });
-            const data = await res.json();
-            if (data.exito) {
-                msg.className = "mensaje exito visible";
-                msg.textContent = "✓ " + data.mensaje;
-                limpiarFormulario();
-                setTimeout(actualizarDashboard, 2000);
-            } else {
-                msg.className = "mensaje error visible";
-                msg.textContent = "⚠ " + data.mensaje;
-            }
-        } catch(e) {
-            msg.className = "mensaje error visible";
-            msg.textContent = "Error de conexión con el servidor.";
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "Crear proceso electoral";
-        }
+    if (!titulo) {
+        console.log("❌ Falta título");
+        msg.className = "mensaje error visible";
+        msg.textContent = "El título es obligatorio.";
+        return;
     }
+
+    if (opciones.filter(o => o.trim()).length < 2) {
+        console.log("❌ Menos de 2 opciones:", opciones);
+        msg.className = "mensaje error visible";
+        msg.textContent = "Agrega al menos 2 opciones.";
+        return;
+    }
+
+    const inicioInscripcion = document.getElementById("proc-inicio-inscripcion").value;
+    const finInscripcion = document.getElementById("proc-fin-inscripcion").value;
+    const inicioVotacion = document.getElementById("proc-inicio-votacion").value;
+    const finVotacion = document.getElementById("proc-fin-votacion").value;
+
+    console.log("3️⃣ Fechas:", {
+        inicioInscripcion,
+        finInscripcion,
+        inicioVotacion,
+        finVotacion
+    });
+
+    if (!inicioVotacion || !finVotacion) {
+        console.log("❌ Faltan fechas de votación");
+        msg.className = "mensaje error visible";
+        msg.textContent = "Las fechas de votación son obligatorias.";
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Desplegando contrato...";
+
+    msg.className = "mensaje info visible";
+    msg.textContent = "Creando proceso en blockchain. Esto puede tardar unos segundos...";
+
+    try {
+
+        const datos = {
+            titulo,
+            tipo,
+            descripcion: document.getElementById("proc-descripcion")
+                ? document.getElementById("proc-descripcion").value.trim()
+                : "",
+            opciones: opciones.filter(function(o) { return o.trim(); }),
+            inicioInscripcion,
+            finInscripcion,
+            inicioVotacion,
+            finVotacion
+        };
+
+        console.log("4️⃣ Datos a enviar:", datos);
+
+        const formData = new FormData();
+        formData.append("datos", JSON.stringify(datos));
+
+        console.log("5️⃣ FormData creado");
+
+        const pdfInput = document.getElementById("proc-pdf");
+
+        console.log("6️⃣ Input PDF:", pdfInput);
+
+        if (pdfInput.files.length > 0) {
+
+            console.log("7️⃣ Cantidad de archivos:", pdfInput.files.length);
+
+            Array.from(pdfInput.files).forEach(function(file, index) {
+
+                console.log("📄 Archivo", index, {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+
+                formData.append("pdfs", file);
+            });
+
+        } else {
+            console.log("⚠ No se seleccionaron PDFs");
+        }
+
+        console.log("8️⃣ Enviando petición a:", API + "/api/crear-proceso");
+
+        const res = await fetch(API + "/api/crear-proceso", {
+            method: "POST",
+            body: formData
+        });
+
+        console.log("9️⃣ Respuesta recibida:", res);
+
+        const data = await res.json();
+
+        console.log("🔟 JSON del servidor:", data);
+
+        if (data.exito) {
+
+            console.log("✅ Proceso creado correctamente");
+
+            msg.className = "mensaje exito visible";
+            msg.textContent = "✓ " + data.mensaje;
+
+            limpiarFormulario();
+
+            setTimeout(() => {
+                console.log("🔄 Actualizando dashboard");
+                actualizarDashboard();
+            }, 2000);
+
+        } else {
+
+            console.log("❌ Error del servidor:", data.mensaje);
+
+            msg.className = "mensaje error visible";
+            msg.textContent = "⚠ " + data.mensaje;
+
+        }
+
+    } catch (e) {
+
+        console.error("💥 Error en fetch:", e);
+
+        msg.className = "mensaje error visible";
+        msg.textContent = "Error de conexión con el servidor.";
+
+    } finally {
+
+        console.log("🏁 Finalizando proceso");
+
+        btn.disabled = false;
+        btn.textContent = "Crear proceso electoral";
+    }
+}
 
     function limpiarFormulario() {
         document.getElementById("proc-titulo").value = "";
