@@ -2,13 +2,19 @@ const hre = require("hardhat");
 
 async function main() {
     const [cne] = await hre.ethers.getSigners();
+
+    // Obtener fee data y duplicarla para reemplazar transacciones pendientes
+    const feeData = await hre.ethers.provider.getFeeData();
+    const overrides = {
+        maxFeePerGas: feeData.maxFeePerGas * 2n,
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2n,
+    };
+
     const ahora = (await hre.ethers.provider.getBlock("latest")).timestamp;
 
-    // Configuración del proceso electoral
     let config;
     if (require("fs").existsSync("./proceso-config.json")) {
         config = JSON.parse(require("fs").readFileSync("./proceso-config.json", "utf8"));
-        // server.js escribe el campo como "opciones", normalizamos a "candidatos"
         if (!config.candidatos && config.opciones) config.candidatos = config.opciones;
     } else {
         config = {
@@ -24,6 +30,7 @@ async function main() {
     }
 
     console.log("=== Sistema Electoral Ecuador ===");
+    console.log(`Red: ${hre.network.name}`);
 
     const Votacion = await hre.ethers.getContractFactory("Votacion");
     const votacion = await Votacion.deploy(
@@ -32,7 +39,8 @@ async function main() {
         config.inicioInscripcion,
         config.finInscripcion,
         config.inicioVotacion,
-        config.finVotacion
+        config.finVotacion,
+        overrides
     );
     await votacion.waitForDeployment();
 
@@ -42,7 +50,9 @@ async function main() {
 
     // Registrar candidatos
     for (const candidato of config.candidatos) {
-        await votacion.agregarCandidato(candidato);
+        const tx = await votacion.agregarCandidato(candidato, overrides);
+        await tx.wait();
+        console.log(`  ✓ Candidato: ${candidato}`);
     }
     console.log("✓ Candidatos registrados");
 
@@ -55,21 +65,22 @@ async function main() {
         const militantes = XLSX.utils.sheet_to_json(ws);
         for (const m of militantes) {
             const cedula = String(m["Cédula"]);
-            await votacion.registrarCiudadano(cedula);
-            await votacion.agregarMilitante(cedula);
+            await (await votacion.registrarCiudadano(cedula, overrides)).wait();
+            await (await votacion.agregarMilitante(cedula, overrides)).wait();
         }
         console.log(`✓ Padrón cargado: ${militantes.length} militantes`);
     } else if (config.cedulas) {
         for (const cedula of config.cedulas) {
-            await votacion.registrarCiudadano(cedula);
-            await votacion.agregarMilitante(cedula);
+            await (await votacion.registrarCiudadano(cedula, overrides)).wait();
+            await (await votacion.agregarMilitante(cedula, overrides)).wait();
         }
         console.log("✓ Padrón cargado desde config");
     }
 
-    // Guardar dirección del contrato activo
     require("fs").writeFileSync("./contrato-activo.json", JSON.stringify({ direccion }));
-    console.log(`Contrato activo: ${direccion}`);
+    console.log(`\n✅ Contrato activo guardado: ${direccion}`);
+    console.log(`👉 Agrega esto a tu .env:`);
+    console.log(`   DIRECCION_CONTRATO=${direccion}`);
 }
 
 main().catch(console.error);
