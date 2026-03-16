@@ -14,7 +14,7 @@ export const verificarCedula = (cedula) =>
     }).then(r => r.json());
 
 export const verificarPin = (cedula, pin) =>
-    fetch(`${API}/api/verificar-pin`, {
+    fetch(`${API}/api/verificar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cedula, pin })
@@ -41,9 +41,10 @@ export const crearProceso = (datos, pdfs) => {
     return fetch(`${API}/api/crear-proceso`, { method: "POST", body: formData }).then(r => r.json());
 };
 
-export const subirPadron = (archivo) => {
+export const subirPadron = (archivo, tipo) => {
     const formData = new FormData();
     formData.append("padron", archivo);
+    formData.append("tipo", tipo);
     return fetch(`${API}/api/subir-padron`, { method: "POST", body: formData }).then(r => r.json());
 };
 
