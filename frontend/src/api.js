@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const getInfoProceso = () => fetch(`${API}/api/info-proceso`).then(r => r.json());
 export const getOpciones = () => fetch(`${API}/api/opciones`).then(r => r.json());
